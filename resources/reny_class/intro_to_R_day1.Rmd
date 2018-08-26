@@ -1,0 +1,808 @@
+---
+title: "Introduction to R: Day 1"
+author: "Tyler Reny"
+date: "2018"
+output: pdf_document
+editor_options: 
+  chunk_output_type: console
+---
+
+# Problem 1
+
+Here is the description of the problem
+
+```{r}
+a <- 1 + 2
+```
+
+Here is some more text 
+
+$$\lambda \alpha$$
+
+
+First of all, throughout this course, stop me to ask questions! If you don't get something, chances are most others don't get it either. Do not be shy. Interrupt me. I will miss things. Also, I encourage you to help each other. If you finish with a mini-assignment, turn to your neighbor and see if they need help or are stuck. Teaching helps you better understand, too.
+
+I borrowed and adapted a lot of the material in this course from Jenny Bryan at UBC `https://stat545-ubc.github.io/index.html` Ista Zah `http://tutorials.iq.harvard.edu/R/` at Harvard, and Matloff's 'Art of R Programming.'  
+
+Before we get started, did everyone install R and RStudio?
+
+- if not, spend the next few minutes downloading them
+
+- Rstudio (https://www.rstudio.com/products/rstudio/download2/)
+
+- R (https://www.r-project.org/)
+
+- This is R Markdown. I will explain it in greater detail in a later lesson.
+
+Text and code chunks: 
+
+```{r}
+a <- 2 + 5
+a
+```
+
+---------
+# To Begin
+---------
+
+- What I show you is what has worked best for me. I think I have located and learned most best practices. But there are MANY ways to do things and there is a LOT to learn.
+
+- R is HARD. Some of it is stupid and inefficient. You will make lots of mistakes and hate it, at least at first. In the end, though, it is well worth the investment.
+
+- Note that I will use functions and commands in R that I don't explain merely because I forget to explain them, not because I expect you to know what they do. So stop me and ask questions.
+
+---------
+# Workflow and Dropbox/Drive
+---------
+
+- The cloud is your friend. Do everything in the cloud. I strongly suggest investing in a 1TB (~$99 / year) drobpox and using it for everything. I've accidentally deleted important files before. I've written over crucial documents by accident. Dropbox Premium has version control so you can go back to yesterday's version, or last weeks, or last months. 
+
+- Wise words from Matt Barreto: You should be in a position where you could smash your laptop today and be up and working with a new machine tomorrow. You should not have anything important saved on your local machine. Do. Everything. In. The. Cloud.
+
+---------
+# Why R
+---------
+
+What is R?
+
+- R is a free programming language designed for statistical computing
+
+- It was designed for statistics by statisticians and it is open source and free!
+
+- It is becoming the most popular package in academia and business for analyzing data
+
+- Huge user base = lots of packages and lots of online help
+
+- Allows you to make beautiful, highly customized graphics
+
+- Extremely flexible...you can find a way to do anything you want to do. And there is likely someone who has done it already before you.
+
+---------
+# Why RStudio?
+---------
+
+- An Integrated Development Environment (IDE) that provides all the tools needed to program. 
+
+- Helps with replication! 
+
+- Makes your life easier.
+
+---------
+# Some basics
+---------
+
+# Packages
+
+- There are thousands of R packages that help you do things you are hoping to do.
+
+- Be careful, though. Packages are a black box (that is why they exist!). You put some inputs into it and it spits our some outputs. If you don't understand what it is doing in the black box, you can make big mistakes. It is best to learn how to do everything first by hand, understand the assumptions that you are making, and then you can rely on packages. It is easy to type `lm(y~x, data=dat)` without understanding the assumptions that go into linear regression and the estimate of your coefficients and standard errors.
+
+- Working with packages. You first download and install the package. Then it is on your local machine and can be called with the library command.
+
+Note that you can run code by placing the cursor on the line of code you want to execute and pressing Command + Enter (for Macs) or Ctrl + Enter (PC). You can also highlight a chunk of code and run that with the same command.
+
+```{r}
+#what is loaded?
+search()
+
+#how do you install new packages?
+install.packages('lubridate')
+
+#what is downloaded and available to be used?
+library(lubridate)
+library('lubridate')
+
+#some code shortcut...You don't need to understand this now but know that the code is here to
+#return to should you need it in the future
+#loading multiple packages at once
+install.packages('car')
+install.packages('MASS')
+lapply(c('car', 'MASS','lubridate'),library, character.only = TRUE)
+```
+
+Note how I use the hashtag/pound to signify text and distinguish it from code.
+
+---------
+# Your Working Directory
+---------
+
+- This is where your files are stored, where your data lives, where your graphs will be saved.
+
+- Important to get good at keeping track of this. You will use it all the time.
+
+- I strongly suggest you set up a shortcut to copy file paths to your clipboard:
+
+(Windows): http://www.techrepublic.com/blog/windows-and-office/quick-tip-copy-both-the-path-and-the-file-name-to-the-clipboard/
+
+(Mac number 4 on this list): http://www.cnet.com/how-to/how-to-copy-a-file-path-in-os-x/
+
+- Some people will set working directories, this points R to the appropriate working folder so that you can save things with much less typing (or cutting and pasting) but can get confusing if you don't keep track of where everything is saved. Note that this is heavily discouraged by some who teach/use R frequently. Better to use *projects*. 
+
+```{r}
+setwd('/Users/treny/Dropbox/')
+getwd()
+
+#list files in your current working directory
+list.files()
+```
+
+- I usually just write out the full path for saving or reading in files: 
+
+```{r}
+write.csv(csv, '/Users/treny/Dropbox_/_projects/justin_gest/crossroads_book/Cluster_Analysis/clusters_July18.R')
+```
+
+---------
+# Getting Help
+---------
+
+- If there is one skill that is most important to get good at quickly, it is learning where to look for help when you get stuck (you will...a lot).
+
+- One of the beautiful things about R is that there is such a broad user base and very active (don't ask me why) online message boards with help. The trick is knowing how to find it.
+
+- Getting started: Using the ? or `help()` The first place to start when you're using a package is getting used to looking at the help files.
+
+```{r}
+help(sum)
+?sum
+```
+
+- The key things to look at here are 1) Usage: what inputs does the function need; 2) Arguments, what are the format of these inputs in more details; 3) Value: what will the function return; and 4) Examples. I often jump straight to the examples.
+
+- Getting help also means figuring out what is wrong when you get error messages. The best thing to do is to copy the message and search for it in google. Here is an example.
+
+```{r}
+my_variable <- c('1','2','3')
+sum(my_variable)
+```
+
+- When you run this you get an error message; `Error in sum(my_variable) : invalid 'type' (character) of argument`
+
+- Go to google and google that with R after it "Error in sum(my_variable) : invalid 'type' (character) of argument in R"
+
+- Take a look and somebody tell me what is wrong.
+
+- Now for another example. It will not return an error but it will return something you don't want. Figure out how to fix it (hint: look at the help file for the `mean()` function):
+
+```{r}
+my_new_var <- c(1,2,3,4,5,NA,7,8,9,10)
+mean(my_new_var, na.rm=TRUE)
+```
+
+-------------
+# Refresher on Basic Commands in R
+-------------
+
+You all saw a lot of this already in your Beginning R Datacamp Course that you (maybe or maybe not) already completed online. This is meant to be a refresher and give you a chance to practice a bit more. I am going to move quickly.
+
+- R is an object based language
+- `<-` is an assignment operator, some use `=` but that is less frequent
+- on the left if the variable name of the object where I am storing things
+- to the right is whatever I want to put into my object
+
+# Math!
+
+- You can use R as a calculator
+
+```{r}
+5 + 6 #addition
+9 - 3 #subtraction
+6/10 #division
+5*8 #multiplication
+5^2 #exponentiation
+sqrt(25) #square roots, etc ... 
+```
+
+# variables
+
+Variable are the workhorse of R. They store whatever you give them.
+
+There are naming conventions for variables. I tend to like to use snake case for variable names:
+
+```{r}
+some_use_snake_case <- 1
+other.people.use.periods <- 2
+othersUseCamelCase <- 3
+```
+
+This is entirely a matter of preference, but try to keep it consistent. Google style guide uses the periods. Many who use other programming languages will strongly urge you to avoid using the period because there are certain functions in R that require the period `is.matrix()` and other languages, like Python and SQL rely on the period in important ways to define hierachies in function and object calls. You'll notice that I am often not consistent. I am working on it.
+
+If you want to use camelCase, Google style guide suggests using `CamelCase` with a capitalized first letter for functions, only, and `camelCase` with a lower case letter if you prefer, for variable names.
+
+Let's start by making a variable called x:
+
+```{r}
+x <- 10 #assign the variable x the value 10
+x
+```
+
+I will often try to avoid cluttering my scripts with lines like 221 above where I just print the value of an object. I will often assign an object like in 220 and then just highlight the x on that same line and print it to make sure it was assigned properly.
+
+```{r}
+y <- 15
+y
+```
+
+Look what happens now when you add x and y
+
+```{r}
+x + y
+```
+
+You can mix types
+
+```{r}
+x <- 'This is a character string' #this is called a character string
+x
+```
+
+Notice that the character strings are in quotes (either single or double work, just be consistent).
+
+But be weary that you cannot do certain operations with mixed types
+
+```{r}
+x + y
+```
+
+What kind of variable is x, now?
+
+```{r}
+class(x) #tells you the variable class
+class(y)
+```
+
+So we have numeric and character strings, what else can we have?
+
+```{r}
+my_boolean_variable <- TRUE #boolean true/false
+```
+
+Note the lack of quotations. This is not a character string.
+
+```{r}
+class(my_boolean_variable)
+```
+
+So far all I have shown you is variables with one object in them:
+
+```{r}
+length(x) #tells you number of objects inside a variable
+```
+
+These are actually called scalars. But variables can hold many objects. These variables are called vectors.
+
+```{r}
+my_vector <- c(1,2,3,4,5,6)
+my_vector
+class(my_vector)
+length(my_vector)
+```
+
+Notice that `c()` is a function that `combines` or `concatenates` objects together. Note that all the objects in a vector need to be the same class. Tell me what happens when we combine character and numeric objects together:
+
+```{r}
+vector2 <- c(1,2,3,'dog')
+vector2
+class(vector2)
+```
+
+What did it do to the numeric elements?
+
+In sum, you can have vectors of single type scalars:
+
+```{r}
+my_numeric_vector <- c(1,10,20,30,50,100)
+my_character_vector <- c('cool','this','is','a','character','vector')
+my_boolean_vector <- c(T,T,T,F,F,T)
+```
+
+Notice that boolean vectors do not have quotes and you can use T instead of TRUE (F instead of FALSE).
+
+# Naming vectors
+
+You can name objects in a vector
+
+```{r}
+temperatures <- c(64,26,10,-9,0)
+city <- c('Los Angeles, CA','Atlanta, GA','Boston, MA','Great Falls, MT','Chicago, IL')
+names(temperatures) <- city #assigns the names
+temperatures #prints the vector with names
+```
+
+Any time you want to just call up the names of a vector, just use the names function:
+
+```{r}
+names(temperatures)
+```
+
+Exercise: create a vector called `ages` that has 5 ages in it for 5 fictional people. Then add names for the 5 fictional people using the `names()` function:
+
+```{r}
+ages <- c(1,2,3,4,5)
+names(ages) <- c('Jim','Sylvia','Stefan','John','Yoko')
+ages
+```
+
+Now create two more vectors called `weight` (numeric) and `gender` (character) that corresponds with the above vector of ages (i.e. same length where the first object applies to the first person, 2nd to the second, etc). You can make up whatever weights you want. For gender, assign either an 'F' or 'M' for female or male.
+
+```{r}
+weight <- c(100,100,100,100,100)
+gender <- c('F','F','M','M','O')
+```
+
+Notice one really quick way to do this is to copy and paste each one you use and just make changes within the copy, as I'll demonstrate.
+
+# Manipulating vectors
+
+Vectors allow for some advanced calculations:
+
+```{r}
+a <- c(1,2,3,4,5)
+b <- c(1,5,2,6,3,5)
+sum(a)
+sum(b)
+```
+
+Notice what happens when you add these together:
+
+```{r}
+a + b
+```
+
+Notice some other things you can do with vectors:
+
+```{r}
+a > b
+a < b
+a == b
+```
+
+You can also locate items within vectors using bracket operators:
+
+```{r}
+a[1]
+b[2]
+b[c(2,3,4)]
+b[2:4]
+```
+
+As an exercise, go back to the vectors above for age, weight, and gender and extract the value for the third person from all of them:
+
+```{r}
+ages[3]
+weight[3]
+gender[3]
+```
+
+You can do some pretty advanced selections, too. Let's say you want to pull out the values of every object in a vector that is positive:
+
+```{r}
+vec <- c(-2,-5,-7,2,5,-3,12)
+vec > 0 # notice the boolean vector returned
+vec[vec > 0] # this pulls out every value that cooresponds to the argument
+```
+
+# Matrices: 2-dimensional arrays of data
+
+Moving now from single vectors of data to 2 dimensional arrays (think of spreadsheets with rows and columns!) called matrices. Note that matrices are used frequently when you are doing statistical analyses. You won't use explicitly use them very often, at least at first, with your own data analysis but you will be using them frequently in your statistics courses. Note that matrices can only hold numbers. They cannot hold character strings or boolean operators!
+
+```{r}
+matrix(nrow=2,ncol=2)
+```
+
+You can create a matrix with specific values
+
+```{r}
+matrix(data = c(1,2,3,4),nrow=2,ncol=2)
+```
+
+Notice it fills it in by column by default. You can fill it in the other way, by row:
+
+```{r}
+matrix(data = c(1,2,3,4),nrow=2,ncol=2,byrow=T)
+```
+
+Let's do a bigger matrix:
+
+```{r}
+matrix(1:28,nrow=4)
+```
+
+Notice that I don't need to tell it number of columns because it will calculate how many columns needed to fill in 4 rows with 28 objects. What happens if I mis-count?
+
+```{r}
+myMatrix <- matrix(1:29,nrow=4,ncol=7)
+myMatrix
+```
+
+Notice that IT WILL CREATE THE MATRIX but will (sometimes, not always) return a warning Look at what it does to the extra value that wasn't specified.
+
+You can give the matrix rownames and column names:
+
+```{r}
+rownames(myMatrix) <- c('row1','row2','row3','row4')
+colnames(myMatrix) <- c('a','b','c','d','e','f','g')
+myMatrix
+```
+
+You can add rows and columns to the matrix using two useful commands `rbind` and `cbind`:
+
+```{r}
+row5 <- 1:7
+rbind(myMatrix,row5)
+```
+
+Note what happens after you add that, though:
+
+```{r}
+myMatrix
+```
+
+It isn't permanently added until you save it:
+
+```{r}
+myMatrix <- rbind(myMatrix,row5)
+myMatrix
+```
+
+Let's add a column now:
+
+```{r}
+h <- c(1,2,3,4,5)
+myMatrix <- cbind(myMatrix,h)
+myMatrix
+```
+
+```{r}
+h <- c(1,2,3,4,5,6)
+myMatrix <- cbind(myMatrix,h)
+myMatrix
+```
+
+# Selecting objects from a 2 dimension array
+
+You can use bracket operators to select objects from a 2-dimensional array as well. YOu just need to specify the row and column in this format `matrix[row,column]`
+
+```{r}
+myMatrix[1,2] # row 1, column 2
+myMatrix[1,] # return EVERYTHING in row 1
+myMatrix[,2] # return EVERYTHING in column 2
+```
+
+Or you can be more advanced. Let's select row 1 and 5 for column 2 and 4:
+
+```{r}
+myMatrix[c(1,5),c(2,4)]
+```
+
+Or rows 1 through 4 of columns 2 through 4:
+
+```{r}
+myMatrix[1:4,2:4]
+```
+
+You can do calculations with matrices:
+
+```{r}
+myMatrix * 2
+myMatrix / 2
+myMatrix * myMatrix
+t(myMatrix)
+```
+
+If you want to do actual matrix multiplication, you need to use the special matrix multiplication operator `%*%`
+
+```{r}
+myMatrix %*% t(myMatrix)
+```
+
+Okay, for an exercise, create a 4 by 4 matrix of whatever numbers you want. Add row names and column names. Then using the bracket operators extract the 3rd and 4th rows of the 1st and 2nd columns:
+
+```{r}
+myNewMat <- matrix(rnorm(16),4,4)
+rownames(myNewMat) <- colnames(myNewMat) <- c(1,2,3,4)
+myNewMat[3:4,1:2]
+```
+
+# Data Frames
+
+Now for data frames. This is how you will work with data almost all of the time you are doing statistical analyses. Think again of the spreadsheet where you have rows (observations) and columns (variables). Dataframes are different than matrices because they can hold different types of data. One column can be numeric, another characer, and another boolean. 
+
+To work with a sample dataframe let's install the package `car` so that we can work with their toy dataset.
+
+```{r}
+install.packages('car') # if you need to
+library(car) #load the package
+mtcars #this is the dataset in the car package
+```
+
+There are some helper functions in R to help you look at a dataframe. The first, which will be helpful at first but I encourage you to not use frequently is `View()`
+
+```{r}
+View(mtcars)
+```
+
+Use these instead:
+
+```{r}
+head(mtcars) #looks at the first 6 rows
+tail(mtcars) #looks at last 6 rows
+str(mtcars) #shows what each variable is
+summary(mtcars) #summarizes each variable
+```
+
+How do you create your own dataframe?
+
+```{r} 
+set.seed(123) #fixes your randomization
+myDataFrame <- data.frame(x = rnorm(10),
+                          y = rnorm(10))
+myDataFrame
+```
+
+A few things are happening here. I am creating a dataframe with 2 columns, x and y. Each consists of 10 random values from a standard normal distribution, that is what the `rnorm()` function does. Therefore it has 10 rows. You can look at the size of the dataframe with the `dim()` function or count the rows and columsn with the `nrow()` and `ncol()` functions:
+
+```{r}
+dim(myDataFrame)
+ncol(myDataFrame)
+nrow(myDataFrame)
+```
+
+You select elements the same way as with matrices, but there are some additional operators for dataframes:
+
+```{r}
+myDataFrame[1,2] #first row, second column
+```
+
+Let's say you want to just look at the objects in column 1. There are four ways to do this (and probably more!)
+
+```{r}
+myDataFrame[,1] # first column
+myDataFrame[,'x'] # column named x
+myDataFrame$x # column named x
+myDataFrame[['x']] # column named x
+```
+
+Exercise: Create your own dataframe called `df` that has four columns: `name`, `age`, `gender`, `weight`. Use the vectors you created earlier to fill in the values. The dataframe should be 4 columns and 5 rows long. I'll provide the scaffolding below:
+
+```{r}
+names <- c('Jim','Sylvia','Stefan','John','Yoko')
+df <- data.frame(name=names,
+                 age=ages,
+                 weight=weight,
+                 gender=gender)
+rownames(df) <- NULL
+df
+
+df2 <- data.frame(names=names,
+                 ages=ages,
+                 weight=weight,
+                 gender)
+df
+df2
+
+```
+
+Now use all four methods shown above to print the ages to the screen:
+
+```{r}
+df[,1]
+df[,'age']
+df$weight
+df[['gender']]
+```
+
+Now print the age and weight for the first and third person in the dataframe:
+
+```{r}
+df[c(1,3),c('age','weight')]
+
+which(names(df)=='age')
+which(names(df)=='weight')
+df[c(1,3),c(2,3)]
+
+df[c(1,3),c(which(names(df)=='age'),which(names(df)=='weight'))]
+
+df$age[c(1,3)]
+df$weight[c(1,3)]
+
+```
+
+# Lists
+
+Last, but not least, lists are like file drawers cabinets where each object in the list (a drawer) can hold whatever it wants. Here's an example:
+
+```{r}
+myList <- vector('list',3) #this is a 3 object list, or a three drawer filed cabinet
+myList
+
+myList <- list(Object1 = myDataFrame,
+     Object2 = c('this','are','a','few', 'of', 'my', 'favorite', 'things'),
+     Object3 = myMatrix)
+myList
+```
+
+Let's add some stuff to the drawers:
+
+```{r}
+myList[[1]] <- myDataFrame
+myList[[2]] <- c('this','are','a','few', 'of', 'my', 'favorite', 'things')
+myList[[3]] <- myMatrix
+myList
+```
+
+Notice that the first drawer now has our dataframe, the second a character vector, and the third a matrix. When you start working a lot with packages, you will see that packages often return objects to you in lists.
+
+Notice that you subset lists using the double brackets!
+
+Exercise: create a list that has 2 objects (drawers) in it. In the first drawer add the dataframe you made above with names, ages, weights, and genders. For the second drawer add a 6 by 6 matrix that you make up with some random numbers in it drawn from a standard normal distribution (hint: see example from earlier!) When you're done, look at it and make sure it worked properly.
+
+```{r}
+myNewList <- list(df,
+                  matrix(rnorm(36),6))
+
+myNewList2 <- list(MyDataFrame = df,
+                   MyMatrix = matrix(rnorm(36),nrow=6,ncol=6))
+
+myNewList3 <- vector('list',2)
+myNewList3[[1]] <- df
+myNewList3[[2]] <- matrix(rnorm(36),nrow=6)
+myNewList3
+
+myNewMatrix <- matrix(rnorm(36),6,6)
+myNewList4 <- list(df,
+                   myNewMatrix)
+myNewList4
+```
+
+To summarize:
+
+1) You can use R as a calculator
+2) Vectors are collections of the same objects joined together
+3) Vectors can be numeric, character, or boolean. They are indexed by a single number in a bracket `var[1]`
+4) Matrices are 2-dimensional arrays of numbers used in statistics. They are indexed by rows and columns `mat[1,2]`
+5) Dataframes can hold different types of data. They are indexed the same as matrices `df[1,2]`
+
+# Before we finish: simulating data
+
+Something you will use frequently in R are functions that allow you to simulate data. You will be doing this a lot. Simulating data is very useful when learning statistics because you KNOW the true world you are trying to estimate when you test out new methods. 
+
+Simulating data relies on generating random numbers. There are some useful functions in R to do this:
+
+`rnorm` = draws from the normal distribution
+`runif` = draws from the uniform distribution
+`rpois` = draws from the poisson distribution
+`rbinom` = draws from the binomial distribution
+`rgamma` = draws from the gamma distribution
+`rbeta` = draws from the beta distribution
+
+The first argument in all of these functions is `n`, the number of samples you want to generate. That is usually followed by the parameters of the distribution (mean, st dev, min, max, etc.)
+
+Let's say you want to draw 100 values from the normal distribution with mean 5, standard deviation 2.
+
+```{r}
+rnorm(100, mean = 5, sd=2)
+```
+
+How about 10 draws from a uniform distribution with min 0, max 1?
+
+```{r}
+set.seed(12345)
+runif(n=10, min=0, max=1)
+set.seed(12345)
+runif(10,max=1,min=0)
+```
+
+For class, you'll have to make sure your code is able to be replicated. Because these are random, everytime you run them, you'll get a different number, so best to use a function called `set.seed()` so that the "random number generator" is the same every time (note: not actually random!)
+
+```{r}
+set.seed(123)
+rnorm(10)
+```
+
+Notice that it is always the same when the seed is set.
+
+Let's see how the simulation works in practice. Let's say we take 10, 50, 100, 250, 1000, and 10000 draws from a standard normal distribution (mean 0 sd 1). Let's run that code and plot the results in a histogram each time to see how the draws start to resemble the distribution we know. Don't worry about the plotting code for now:
+
+```{r}
+install.packages('tidyverse')
+library(tidyverse)
+
+library(ggplot2)
+
+qplot(rnorm(10),type='histogram')
+qplot(rnorm(50),type='histogram')
+qplot(rnorm(100),type='histogram')
+qplot(rnorm(250),type='histogram')
+qplot(rnorm(1000),type='histogram')
+qplot(rnorm(10000000),type='histogram')
+```
+
+Another function that is useful for data simulation is `sample()` This function allows you to take a random draw from some vector of objects. Let's say you have a vector of 10 random numbers and you want to draw 5 at random (with equal probability) from that:
+
+```{r}
+myPopulation <- rnorm(10)
+sample(myPopulation,5,replace=F)
+```
+
+Notice that I set replace = F. You don't want it to draw from the bag and then return for the next draw. When we get to bootstrapping, later, we'll be sampling WITH replacement. But we'll save that for later.
+
+Exercise: Draw 1000 values from a uniform distribution with minimum 1 and maximum 10 and save them as a vector. Then sample 15 values from that vector.
+
+```{r}
+unifDraws <- runif(1000,1,10)
+hist(unifDraws)
+sample(unifDraws,15)
+```
+
+Finally, sometimes you want to sample rows from a dataframe. Here we can use a useful function from Hadley Wickham's `dplyr()` package called `sample_n()` Here's how it works. Let's begin by creating a fake dataset that is 1000 rows long and has three variables: x, y, and z.
+
+```{r}
+set.seed(123)
+dataFrame <- data.frame(x=rnorm(1000),
+                        y=runif(1000,10,20),
+                        z=rpois(1000,2))
+head(dataFrame) #check out the head
+```
+
+Now say we want to sample 10 rows from the dataframe:
+
+```{r}
+# note that you need to install and load tidyverse or dplyr for this to work
+# install.packages('tidyverse')
+# library(tidyverse)
+
+samp <- sample_n(dataFrame,10)
+samp
+```
+
+This is the same as:
+
+```{r}
+dataFrame[sample(1:nrow(dataFrame),10,replace=F),]
+#or
+
+sampIndex <- sample(1:nrow(dataFrame),10,replace=F)
+dataFrame[sampIndex,]
+```
+
+Exercise: Create a fake dataset with 5 columns and 1000 rows. Use the two sampling methods above to pull out 20 random rows of the dataset.
+
+```{r}
+myDat <- data.frame(a=rnorm(1000),
+                    b=1:1000,
+                    c=1000:1,
+                    d=rpois(1000,5),
+                    e=runif(1000,10,1000))
+
+head(myDat)
+dim(myDat)
+
+samp_index <- sample(1:nrow(myDat),20,replace=F)
+myDat[samp_index,]
+
+sample_n(myDat,20)
+```
+
+
+

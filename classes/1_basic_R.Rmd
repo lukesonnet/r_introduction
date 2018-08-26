@@ -1,0 +1,574 @@
+---
+title: 'Class 1: Basic R'
+author: "Luke Sonnet"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Much of this course comes from materials created by [Tyler Reny](http://tylerreny.github.io/).
+
+## What is this?
+
+This is an RMarkdown document. It is a way to include code and text in the same document. How these files will look is like the following:
+
+Here's some text explaining the problem and what we are going to do.
+
+```{r}
+# This is an R chunk with some code
+x <- 3 + 4
+x
+```
+
+## Why R?
+
+* R is free, and open-source
+* R is a comprehensive, extensible programming language
+* R has a large ecosystem of useful packages
+* R is functional, replicable, and integrates well with modern workflows
+* R is used by political scientists, economists, sociologists, psychologists, and many in the biological sciences; it is also one of the main languages used by statisticians
+* R is flexible
+
+## Packages
+
+For each major version of R (3.4, 3.5, etc.) you need to install a series of packages that greatly enhance the usability of R. Let's look at how we interact with packages.
+
+```{r}
+# what is loaded?
+search()
+
+# how do you install new packages?
+install.packages('lubridate')
+
+# what is downloaded and available to be used?
+library(lubridate)
+```
+
+## Working directories
+
+You can find your current working directory a couple of ways. In your Console window it is listed, and you can also get it programmatically.
+
+```{r}
+getwd()
+
+# you can always set it for the current session
+setwd("~/Dropbox/teaching/lums_R")
+
+#list files in your current working directory
+list.files()
+```
+
+In general, it's a good idea to try and work in some root folder for an entire project, and then define all paths relative to that folder. My preferred way to do this is through R Projects. Let's show you how to create one.
+
+If you work on scripts in a project, every working directory is set to the project directory, and then all paths are relative to that root directory.
+
+## Basic commands
+
+R is a programming language that has fairly complete functionality, although it is designed specifically for statistical analysis. Unlike Stata, where you work primarily with one focal data matrix and maybe some other auxiliary data, everything in R is an "object", meaning it has a name and refers to a specific data matrix, vector, number, function, or more complicated object.
+
+```{r}
+5 + 6 # addition
+9 - 3 # subtraction
+6 / 10 # division
+5 * 8 # multiplication
+5^2 # exponentiation
+sqrt(25) # square roots
+abs(-23) # absolute values
+# much more...
+```
+
+In R you will mostly want to be saving your work in objects that you use in later analysis or for output to files.
+
+- `<-` is an assignment operator, some use `=` but that is less frequent
+- on the left if the variable name of the object where I am storing things
+- to the right is whatever I want to put into my object
+
+Let's create a simple vector!
+
+```{r}
+x <- c(1, 2, 3)
+x
+```
+
+We can always inspect an object with the `str()` function. This is a super helpful function I use all the time to check out what I'm working with.
+
+```{r}
+str(x)
+```
+
+What was that `c()` function above we used to create the `x` object? Simply it's the combine function that is used all the time in R to create vectors and other objects. Let's learn more about it.
+
+## Getting help
+
+Getting help in R is super important. You need to learn carefully how to use the help file, and also how to use the internet to find solutions to problems you will encounter.
+
+```{r}
+?c
+?str
+```
+
+Let's show an example of when you might need to debug a problem when creating a sum of a vector.
+
+```{r}
+z <- c('1', '2', '3')
+z
+sum(z)
+```
+
+What does this error message tell you?
+
+What does `sum()` expect?
+
+```{r}
+?sum
+str(z)
+```
+
+**Exercise**: Use the `as.numeric()` function to change the `z` object to a numeric vector and then save the sum as `z_num`. Look at the `?as.numeric` help if you aren't sure how to use it!
+
+```{r}
+```
+
+## More work with numbers and vectors
+
+Let's create a couple of objects and see how we can interact with them!
+
+```{r}
+x <- 5
+x
+y <- 10
+y
+z <- x + y
+z
+```
+
+There a couple of different ways we can create numeric vectors, especially when they are sequences.
+
+```{r}
+x <- c(1, 2, 3)
+y <- 1:3
+z <- seq(1, 3, by = 1)
+x
+y
+z
+```
+
+These all look similar, but what's different about them? Any one notice?
+
+The key difference between R and other languages and statistical software is its strong reliance on "vectorization" which refers to the idea that R will apply some functions to each element of a vector rather than the entire vector. This idea won't be foreign to those of you used to Stata.
+
+Let's see some useful ways this can be used.
+
+```{r}
+a_vector <- c(-3.2, 1.3, 0.1)
+a_number <- 2.7
+
+a_vector + a_number
+```
+
+When you apply the `+` function to a function and a number, it is going to add that number to all of the elements in the vector. Essentially it is applying the addition to each element in the vector.
+
+Many functions that apply to individual elements of a vector are automatically "vectorized".
+
+```{r}
+a_vector^2
+sqrt(a_vector)
+```
+
+If you add two vectors together that are the same length, it proceeds element-wise.
+
+```{r}
+a_second_vector <- c(1.0, 2.3, 0.3)
+a_vector + a_second_vector
+```
+
+```{r}
+length(a_vector)
+length(a_second_vector)
+```
+
+What if you have two vectors of different lengths?
+
+```{r}
+a_short_vector <- c(-1, 1)
+length(a_short_vector)
+
+a_vector
+a_short_vector + a_vector # recycling with warning
+
+a_long_vector <- 1:4
+a_long_vector + a_short_vector # recycling without warning
+```
+
+What you see here is recycling, where it just repeats the shorter vector so that it can apply the operation to the longer vector. This is often very useful, but it can also cause problems. Pay attention to warnings and always pay attention to the size of objects you are working with! It will only warn if the lengths are not multiples of each other. If they are, it will silently recycle.
+
+There are also a bunch of functions we can apply to a vector besides `length`.
+
+```{r}
+# functions that provide metadata about your object
+length(a_vector)
+str(a_vector)
+class(a_vector)
+summarize(a_vector)
+# functions that summarize your object in one number
+sum(a_vector)
+mean(a_vector)
+median(a_vector)
+max(a_vector)
+min(a_vector)
+# functions that keep your object the same length but apply a function
+# to each element (vectorized)
+abs(a_vector)
+sqrt(a_vector)
+a_vector^2
+as.character(a_vector)
+```
+
+You can also "name" most things in R by doing something like this:
+
+```{r}
+names(a_vector) # Does it have existing names?
+names(a_vector) <- c("value 1", "ValEU $22", "value 3")
+a_vector
+class(a_vector)
+str(a_vector)
+attr(a_vector, "names")
+names(a_vector)
+```
+
+## Special values
+
+One more crucial thing to introduce is some special values, such as the `NA` value.
+
+The `NA` value is similar to `.` in Stata; it represents missing data. It isn't like `.` in that it isn't stored as some negative infinite value and it is not automatically ignored by many functions in R. Let's take a look at the following function.
+
+```{r}
+na_vector <- c(1.3, NA, -0.4)
+na_vector
+is.na(na_vector)
+mean(na_vector)
+```
+
+**Exercise**: Use the above `na_vector` vector and use the `?mean` help to write code that gets the mean ignoring the missing value.
+
+```{r}
+```
+
+There are several other special values you may see:
+
+```{r}
+x <- NA
+class(x)
+is.na(x)
+# There are different "kinds" of NAs
+x <- NA_real_
+x
+class(x) # numeric
+
+x <- NA_character_
+x
+class(x) # character
+
+# No value at all
+NULL
+x <- NULL
+x
+
+x <- numeric(0) # no value, but very different!
+x
+
+# Other special (non-)numbers
+NaN
+Inf
+-Inf
+1/0
+-1/0
+log(-1)
+sqrt(-1)
+?is.nan
+?is.infinite
+```
+
+## Subsetting and indexing
+
+There are *many* ways to subset a vector. Let's review the major ways!
+
+First way is you can use position indexing. Unlike many other programming languages, R starts at 1 rather than 0. To get the first element out of `na_vector` we can do the following.
+
+```{r}
+na_vector
+na_vector[1]
+na_vector[2]
+na_vector[3]
+```
+
+We can also select several elements at a time using a vector of indices:
+
+```{r}
+na_vector
+na_vector[c(1, 3)]
+
+i_vec <- c(1, 3)
+na_vector[i_vec]
+```
+
+We can also do "boolean" subsetting, where we create a logical vector that is the same length as the object to draw out the TRUE objects. This is a really helpful feature.
+
+```{r}
+l_vec <- c(FALSE, TRUE, TRUE)
+na_vector
+na_vector[l_vec]
+
+na_vector > 0
+na_vector[na_vector > 0]
+
+is.na(na_vector)
+!is.na(na_vector)
+na_vector[!is.na(na_vector)]
+```
+
+You can also use names if your vector is named!
+```{r}
+names(na_vector) <- c('first_val', 'missing', 'second_val')
+na_vector['second_val']
+na_vector['bad_label']
+```
+
+But what about that above "NA" element in the logical subsetting vector? This is some peculiar behavior. When you subset using an NA, it doesn't just pull out that value, it actually just returns NA in that position.
+
+```{r}
+na_vector
+na_vector[c(NA, NA, TRUE)]
+na_vector[c(NA, TRUE, TRUE)]
+```
+
+## Matrices
+
+I'm only going to do a brief introduction to matrices, as I want to move on to the main data structures you'll be using.
+
+Let's use the `matrix` function to create a basic matrix
+
+```{r}
+mat <- matrix(1:4, nrow = 2, ncol = 2)
+mat
+mat2 <- matrix(1:4, nrow = 2, ncol = 2, byrow = TRUE)
+mat2
+mat3 <- matrix(1:4, nrow = 2, dimnames = list(c("a", "b"), c("A", "B")))
+mat3
+rownames(mat3)
+colnames(mat3)
+```
+
+Subsetting and much of the basic math works as you would expect:
+
+```{r}
+mat
+mat[1, 2]
+mat[c(1, 2), 1]
+mat[, 1]
+mat[1, ]
+mat[2, ]
+mat[c(TRUE, FALSE), c(TRUE, TRUE)]
+mat3["a", "A"]
+
+# element-wise broadcasting of functions
+mat + mat2
+mat / mat2
+mat^2
+sqrt(mat)
+abs(mat)
+sign(mat)
+
+# summarizes entire matrix
+mean(mat)
+sum(mat)
+nrow(mat)
+ncol(mat)
+
+# matrix multiplication
+mat %*% mat2
+t(mat) %*% mat2 # transpose!
+crossprod(mat, mat2)
+tcrossprod(mat, mat2)
+```
+
+Now, if we want to apply a function to each row or each column of our matrix, it is pretty simple. We can use the `apply` method! The 1st MARGIN is the rows, and the 2nd MARGIN is the columns.
+
+```{r}
+?apply
+mat3
+apply(mat3, 1, mean)
+apply(mat3, 2, mean)
+apply(mat3, 1, sum)
+apply(mat3, 2, sum)
+
+# You can pass other arguments two ways
+apply(mat3, 1, sum, na.rm = TRUE)
+apply(mat3, 1, function(x) sum(x, na.rm = TRUE))
+```
+
+Sometimes there are dedicated functions for these occasions.
+
+```{r}
+rowMeans(mat3)
+colMeans(mat3)
+rowSums(mat3)
+colSums(mat3)
+```
+
+We can also smush matrices together using `rbind` or `cbind`.
+
+```{r}
+cbind(mat, mat2)
+rbind(mat, mat2)
+```
+
+**Exercise:** Create a matrix with 3 rows and 2 columns with some numbers you made up and matrix multiply it by another matrix with 2 rows and 3 columns. Get the mean of each column of the resulting matrix any way you want.
+
+```{r}
+```
+
+## Creating and sampling data
+
+There are many ways to create fake data. Mostly we have just generated vectors using the `1:n` syntax or using the combine function `c(1.0, -1, 3)`. Now I'll cover more statistically grounded ways to generate data. First, you can draw data from a wide range of distributions.
+
+First let's look at the helpfile for `rnorm()`.
+
+```{r}
+rnorm(n = 4)
+rnorm(n = 4, mean = 2, sd = 3)
+rpois(n = 4, lambda = 20)
+rbinom(n = 4, size = 3, prob = 0.3)
+rbinom(n = 4, size = 1, prob = 0.5)
+rbeta(n = 4, shape1 = 1, shape2 = 3.4)
+```
+
+**Exercise:** Use `runif` to draw 10 numbers from a continuous uniform distribution ranging from 3 to 4.
+
+```{r}
+?runif
+```
+
+Another useful fuction is `sample`. It can be used many ways. Let's explore some of them.
+
+```{r}
+sample(3) # if given an integer, just randomly orders a sequence starting at 1
+sample(c(1.0, -3.2, 4.1)) # if given a vector, it randomly orders it
+sample(1:10, replace = TRUE) # can sample with replacement, defaults to same size vector
+sample(c(TRUE, FALSE), size = 10, replace = TRUE) # can sample with replacement, different size vector
+sample(1:3, size = 10, replace = FALSE) # What does this error mean?
+```
+
+Often we can use sample to conveniently get a bunch of coin tosses for randomization and the like.
+
+```{r}
+sample(0:1, size = 20, replace = TRUE)
+rep(0:1, each = 10)
+sample(rep(0:1, each = 10))
+```
+
+## data.frames
+
+`data.frames` are the main data structure you will directly interface with in R. `data.frames` are simply lists, which I'll introduce to you now.
+
+Lists are an object that contain a series of named or unnamed other objects. Unlike a vector or a matrix, the items in the list need not be of the same type.
+
+```{r}
+wallet <- list(
+  credit_cards = c("visa", "master_card"),
+  rupees = 6240,
+  other_currency = c("dollars" = 60, "euros" = 50)
+)
+wallet
+str(wallet)
+names(wallet)
+length(wallet)
+```
+
+There are also two new ways to subset a list. First, we can use the double bracket, `[[`. With lists, a single bracket could allow us to get one or two things, and it will always return a list. Double brackets only get us one thing from the list, but they return that object as itself, not as a subset of the list.
+
+```{r}
+wallet[1]
+wallet[1:2]
+str(wallet[1])
+wallet[[1]]
+str(wallet[[1]])
+wallet["rupees"]
+wallet[["rupees"]]
+```
+
+You can now also use the `$` operator to get a variable by name from a list or a data.frame.
+
+```{r}
+wallet$rupees
+```
+
+So a data.frame is just a list, where each variable is an object in the list, and all variables in the list must be the same length. This is the data matrix you're familiar with from Stata.
+
+```{r}
+dat <- data.frame(
+  x = rnorm(10),
+  y = rnorm(10),
+  z = letters[1:10]
+)
+dat
+head(dat)
+str(dat)
+nrow(dat)
+ncol(dat)
+
+View(dat)
+dat["x"]
+str(dat["x"])
+dat[["x"]]
+dat[, "x"]
+str(dat[["x"]])
+dat$x
+str(dat$x)
+```
+
+You'll notice `z` is a factor. We'll talk more about that later, but it's like a labeled variable in Stata, where there is some text label for some numeric values that show up in the data. This happens when you use base R data.frame constructors and character vectors. When we get to the tidyverse we will often avoid factors.
+
+Subsetting data.frames works a lot like subsetting matrices. There are many options:
+
+```{r}
+dat[1:3, ]
+dat[3:4, c("x", "z")]
+dat[3:4, 1:2]
+dat[, 1:2]
+
+samp_id <- sample(nrow(dat), size = 5)
+samp_id
+dat[samp_id, ]
+# Also can directly sample
+dat[sample(nrow(dat), size = 5), ]
+```
+
+You can edit columns of a data.frame just as you would an individual vector.
+
+```{r}
+dat$x_y <- dat$x + dat$y
+head(dat)
+```
+
+We'll manipulate data.frames more tomorrow using the `tidyverse`. Let's just load it here to use some convience functions.
+
+```{r}
+library(tidyverse)
+glimpse(dat)
+# Also a function to make sampling easier
+samp_id <- sample_n(dat, size = 5)
+samp_id
+```
+
+## files and reading files
+
+Let's read in our first file! Most of the time in R and in general I like to work with `.csv` files. These are Comma-Separated Value files. They are simple plain text files that have no bells and whistles, just raw data that can easily be read by many pieces of software.
+
+## Exercise
+
+load a dataset, get the mean of some column by some other group that you care about

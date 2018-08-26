@@ -1,0 +1,63 @@
+---
+title: 'Class 0: Getting started'
+author: "Luke Sonnet"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Getting the software
+
+R is a programming language that can be installed on basically any machine, and it comes with a default graphical user interface (GUI) that is very similar to Stata. There's a console and a script editor.
+
+RStudio is an integrated development environment (IDE), which provides more tools and an easier interface to work on scripts, dynamic documents, and in the console.
+
+Let's install both.
+
+To install R, [go here](https://cran.r-project.org/). At the top you will see various links to download R for your operating system. Click the appropriate one and install it. Get the latest release, which is 3.5.1 when I'm writing this. You can trouble shoot online; the R userbase is huge and lots of materials exist to help new users.
+
+To install RStudio, [go here](https://www.rstudio.com/products/rstudio/download/). Get the free RStudio Desktop version. With R, unlike Stata, you should get used to getting things for free.
+
+## Getting started
+
+Open up RStudio. You should see four window panes. One will be where your **Console** is, where you can directly type in commands and interact with your environment. This is just like in Stata, the main console window. Another is your **Environment**, which keeps track of all of the different objects in memory. Unlike Stata, which relies on loading one data matrix at a time, your R environment can have many data matrices, each called a `data.frame`, along with various other objects, like vectors, numbers, and so on.
+
+There is also a **Files** pane, which show you files in your current working directory, along with other tabs for your Plots and installed Packages (more on that later). The last pane is the most important, and is where you will have all of the .R scripts, dynamic documents, and other documents that you are editing. Let's call this your **Scripts** pane.
+
+Just like when you are editing a .do file, there are shortcuts to running lines of code that you write in your Scripts window in your Console. On Mac this is Command-Enter, which runs your current line, and I think it's Ctrl-Enter on Windows, or something similar.
+
+## Installing packages
+
+Before I send you off on a brief warm-up tutorial. Let's install some important packages. You can do this by copy and pasting the following command into your console:
+
+```{r, eval = FALSE}
+install.packages(c("tidyverse", "haven", "knitr", "glmnet", "fabricatr", "randomizr", "estimatr"))
+```
+
+Hopefully those all install fine. If they don't try to debug it yourself online and then contact me.
+
+## Your first tutorials
+
+Then, before class, I want you to get familiar with some very basic commands in R. 
+
+You can use one of two resources. You can try `swirl`, and you can follow the commands here to get started in swirl: https://swirlstats.com/students.html Try to complete the introductory course.
+
+If that is unclear to you or difficult to navigate, you can try the DataCamp course on R, that should only take a couple of hours: https://www.datacamp.com/courses/free-introduction-to-r
+
+If you get familiar with the basics, we can make a lot more progress once we're together, so please complete at least one of these courses.
+
+## Course overview
+
+1 - Introduction to R (vectors, lists, data.frames, files)
+
+2 - Data Manipulation (dplyr, tidyr)
+
+3 - Data Visualization (ggplot2, sf)
+
+4 - Data Analysis (correlations, regression)
+
+5 - Advanced topics (scraping, machine learning)

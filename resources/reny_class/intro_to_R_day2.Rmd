@@ -1,0 +1,1191 @@
+---
+title: "Introduction to R: Day 2"
+author: "Tyler Reny"
+date: "2018"
+output: pdf_document
+editor_options: 
+  chunk_output_type: console
+---
+
+Today we're going to discuss functions and loops.
+
+------------
+# FUNCTIONS ----
+------------
+
+If you plan on copying and pasting code more than once, best to write a function.
+
+What is a function? A function takes a set of inputs, does something to them, and returns the result. Here's an example.
+
+```{r}
+myFunction <- function(x){
+  solution <- x + 1
+  return(solution)
+}
+```
+
+Here is a sample of a function. What are the components? At the top you have the name of the function `myFunction`. This is what you will use to run the function later. To the right of the arrow you have your `function()` notation. Within those parentheses, you put the arguments that you will feed into the function. There can be many of them, just separate them with commas. Note that these are just empty variables that need to be in the function body itself. They don't mean anything until you supply values. What exists inside the curly bracket is what the function does to the input and returns. Make sure the curly brackets are closed at the end of the function.
+
+Here's what this particular function does: It takes the value, x, that you supply, adds one to it, saves it as a variable called `solution` (note that this happens only inside the function, it will not save the varible to your memory) and returns the value. Note that if you don't tell it to return the answer, it won't print anything to the screen. 
+
+Let's try it!
+
+```{r}
+myFunction(2)
+myFunction(10)
+myFunction(-2)
+```
+
+---------
+# Excercise
+---------
+
+Write your own function that takes two inputs, x and y, adds them together, and returns the answer. Then run the function to make sure it works. Note that you need to name the function something, it needs to take two arguments---x and y---and that it needs to add them together and return the answer within the body of the function.
+
+```{r}
+addXY <- function(x,y){
+  solution <- x + y
+  return(solution)
+}
+addXY(1,5)
+
+addXY <- function(x,y){
+  return(x + y)
+}
+
+addXY <- function(x,y){
+  return(x + y)
+  }
+addXY(1,5)
+```
+
+Now for a bit more complexity. Let's say that you want to calculate the mean, median, and range of some vectors. You could just write out the mean(varA, na.rm=T), median(varA, na.rm=T), and range(varA, na.rm=T) each time, but you could also write a function to do it for you. This way you don't have to copy and paste a whole bunch of times.
+
+```{r}
+# Here I create I function called sum_stats() that takes one input, x
+sum_stats <- function(x){
+  
+  #takes the mean of x
+  mean.out <- mean(x, na.rm=T) 
+  
+  #the median of x
+  median.out <- median(x, na.rm=T) 
+  
+  #the range of x
+  range.out <- range(x, na.rm=T) 
+  
+  #places the results in a list
+  list.out <- list(mean = mean.out, 
+                   median = median.out,
+                   range = range.out)
+  
+  #returns the list...if you don't do this you run the function and it won't report results
+  return(list.out) 
+}
+
+x <- rnorm(100)
+sum_stats(x)
+
+#notice that the base R summary function does the same thing
+summary(x)
+```
+
+Notice that everything that happens within the function will stay within the function. That is, if you create a variable within the function, it will NOT be saved in your global memory. If you want things happening within function to be saved in your global memory, use the ``<<-`` double arrow. Notice the difference below. Run the first and look at the right of your R studio console to see that it didn't add anything called x to your global memory. The second one will. Note that this is bad habit and you should try to avoid saving things in global memory unless it is absolutely necessary.
+
+```{r}
+samp <- function(x){
+  x <- x+2
+  return(x)
+}
+samp(2)
+
+samp <- function(x){
+  x <<- x+2
+}
+samp(4)
+```
+
+Forget what your function looks like? Just call the function without an argument:
+
+```{r}
+sum_stats
+```
+
+Notice that I return the results in a list. The list format allows me to return an answer, like range, that has 2 values. 
+Be careful, sometimes functions work when we don't want them to:
+
+```{r}
+sum_stats(c(TRUE, TRUE, FALSE))
+```
+
+There are some checks you can write into the function to make sure this doesn't happen:
+
+```{r}
+sum_stats <- function(x){
+  stopifnot(is.numeric(x)) #this will break the function is the argument isn't numeric
+  mean.out <- mean(x, na.rm=T)
+  median.out <- median(x, na.rm=T)
+  range.out <- range(x, na.rm=T)
+  list.out <- list(mean = mean.out,
+                   median = median.out,
+                   range = range.out)
+  return(list.out)
+}
+sum_stats(c(TRUE, TRUE, FALSE))
+```
+
+You can write a custom error message if your check fails:
+
+```{r}
+sum_stats <- function(x){
+  if(!is.numeric(x)){
+    stop("You are fake news. You know that this function \nshould only take numeric values, this vector is ",   class(x))
+  }
+  mean.out <- mean(x, na.rm=T)
+  median.out <- median(x, na.rm=T)
+  range.out <- range(x, na.rm=T)
+  list.out <- list(mean = mean.out,
+                   median = median.out,
+                   range = range.out)
+  return(list.out)
+}
+sum_stats(c(TRUE, TRUE, FALSE))
+sum_stats(c("don't", "let", "me", "down"))
+```
+
+-------
+# Exercise
+-------
+
+Okay, we're getting a bit more advanced here. Write a function that takes 2 numeric vectors (ie `x <- rnorm()`) as inputs, lets call them x and y, finds the lower and upper 25% and 75% quantiles of both, and returns them for you in a list object (hint: `quantile(x,c(0.25,0.75))` look at the help file if you need to).  Be sure to put an error message in there so that the function doesn't work if the variables are not numeric. Test your function using the `pop` variable and the `gdpPercap` variables in the gapminder dataset:
+
+```{r}
+
+library(gapminder) # use install.packages('gapminder') if you don't already have gapminder installed
+head(gapminder)
+
+my_quantiles <- function(x,y){
+    if(!is.numeric(x) | !is.numeric(y)){
+    stop("Wrong data format")
+  }
+  quant_x <- quantile(x,c(0.25,0.75),na.rm=T)
+  quant_y <- quantile(y,c(0.25,0.75),na.rm=T)
+  list.out <- list(X=quant_x,
+                   Y=quant_y)
+  return(list.out)
+}
+my_quantiles(x=gapminder$gdpPercap,gapminder$pop)
+```
+
+Now I'm going to give you some code that will generate some fake data and plot it. I want you to turn this into a function called `myPlot` that takes two arguments (inputs), alpha and beta, and returns the plot using those parameters. Run the code below to see how it works. Try putting different alphas (intercepts) and betas (slopes) into the function to see how the data changes!
+
+```{r}
+beta <- 1.6 #slope
+alpha <- 0.25 # intercept
+set.seed(04564) #for replication
+x <- rnorm(1000,2,1) #create an x
+y <- alpha + beta*x + rnorm(1000,0,.8) #create a y that is a linear combination of x*beta with an intercept and error term
+plot(x,y,xlim=c(-1,5),ylim=c(-1,5)) # plot with fixed x and y axes
+abline(h=0,v=0, col='grey',lty=2) #grid so you know where the origin is
+
+# your function
+myPlot <- function(alpha, beta){
+  set.seed(04564)
+  x <- rnorm(1000,2,1) 
+  y <- alpha + beta*x + rnorm(1000,0,.8)
+  plot(x,y,xlim=c(-1,5),ylim=c(-1,5))
+  abline(h=0,v=0, col='grey',lty=2)
+}
+myPlot(-1,4)
+```
+
+----------
+# Fun with LOOPS
+----------
+
+(From https://www.datacamp.com/community/tutorials/tutorial-on-loops-in-r)
+
+"Every time an operation needs to be repeated, a loop may come in handy. We only need to specify how many times or upon which conditions those operations need execution: we assign initial values to a control loop variable, perform the loop and then, once finished, we typically do something with the results. 
+
+But when are we supposed to use loops? Couldn't we just replicate the desired instruction for the sufficient number of times? Well, an arbitrary rule of thumb could be that if you need to perform an action (say) three times or more, then a loop or function would serve you better; it makes the code more compact, readable and maintainable and you may save some typing."
+
+Loops are tricky to wrap your head around, but once you get the basic logic, they make sense. 
+
+A loop has two components. 
+
+First, you want to know how many times you want the loop to iterate through. Let's say you want to bootstrap something 1000 times, then you loop through 1000 times. Let's say you want to do something for every row in a dataset, then that loop runs `1:nrow(dataset)`
+
+Second, you need to think of where you are going to store the results of the loop. I like to think of this as a storage container. When you loop through you might create some statistic each time through the loop. You need an empty vector/matrix to put these in as the loop runs.
+
+Always think through the loop first in terms of what you want to do, then you can fill in the code. 
+
+Let's start simple so we can get used to the syntax. The first part of the loop is to tell it what you want to loop through:
+
+`for(i in 1:100)`
+
+This special syntax tells us that we have a for loop, that the loop will be indexed by i (this can be anything you want, try making it j!), and the it will start at 1 and increment by 1 until it hits 100. Let's run this loop and just have it print i out each time:
+
+```{r}
+for(i in 1:100){ #i works
+  #here we're going to slow it down for illustration purposes
+  Sys.sleep(.05)
+  print(i)
+}
+
+for(j in 1:100){ #j works
+  #here we're going to slow it down for illustration purposes
+  Sys.sleep(.05)
+  print(j)
+}
+
+for(p in 1:100){ #notice that this doesn't work because it isn't indexed by r, it is indexed by p
+  print(r)
+}
+```
+
+Say you want to want to print 'hello' 100 times. Notice that I use the `paste()` function here. Feel free to check the help file to see how paste works.
+
+```{r}
+for(i in 1:100){
+  Sys.sleep(.05) #again, note this is for illustration purposes
+  print(paste('this is hello number',i,sep=' '))
+}
+```
+
+Notice that when you add i into the equation it tells you what position you are in the loop.
+
+--------
+# Exercise
+--------
+
+Write a for loop that prints 'You are fake news' 1000 times.
+
+```{r}
+for(i in 1:1000){
+  print('You are fake news')
+  print(paste0('This is run ',i))
+}
+```
+
+Sometimes you want to reference a vector within a loop using the i as an index. Let me explain. Let's look back at the gapminder data.
+
+Let's say we want to loop through each country in the dataset.
+
+```{r}
+library(gapminder)
+gapminder
+countries <- unique(as.character(gapminder$country)) # create a vector of just countries
+
+for(i in 1:length(countries)){
+  print(countries[i])
+}
+```
+
+Notice that I index the loop now from 1 to the length of the countries variable.
+
+Let's say you want to loop through each continent and take the mean of some variable?
+
+The first thing you need to do is figure out how you will group your data. In this case it is by continent so we need a vector of the continents in question:
+
+```{r}
+continents <- unique(as.character(gapminder$continent))
+#vector of each unique continent
+continents
+```
+
+Now we need a container to store the results in. Since we have 5 continents, we need to store 5 values:
+
+```{r}
+results <- rep(NA, length(continents)) #storage container for the results
+results
+```
+
+Check that there are 5 empty spots in this vector. This is pre-allocating memory for your loop. You can technically do this without preallocating space but it is memory intensive and slow. Best to always create a storage container with missing values to store the results.
+
+Now we loop through and take the mean life expectancy for each continent. Think through what the loop is doing. It is referencing back to the vector of continents above. So the first time through it says look at mean life expectancy for continents[1], which is Asia in this case, and store it in the first location in your empty pre-allocated storage container.
+
+```{r}
+for(i in 1:length(continents)){ #we loop through one time for each continent
+  results[i] <- mean(gapminder$lifeExp[gapminder$continent == continents[i]])
+} 
+names(results) <- continents #name them so easier to interpret
+results
+```
+
+So i is serving two purposes here, the continent I am pulling data from and the location in the pre-allocated vectore where I want to store the answers.
+
+-------
+# Exercise
+-------
+
+Now do the same thing as above but calculate mean life expectancy for each country. 
+
+Step 1: create a vector of unique country names
+
+```{r}
+countries <- as.character(unique(gapminder$country))
+```
+
+Step 2: create a storage container that is the length of unique country names to store your answers.
+
+```{r}
+storage <- rep(NA,length(countries))
+```
+
+Step 3: now write a loop that goes from 1 to the length of the unique country names and calculates the mean life expectancy in each country. Store the results in the pre-allocated storage container you made. Remember that you need to index both the countries and the storage container by i. I suggest you copy and paste the previous loop first and then make changes where needed.
+
+```{r}
+for(i in 1:length(countries)){
+  storage[i] <- mean(gapminder$lifeExp[gapminder$country == countries[i]])
+}
+names(storage) <- NULL
+data.frame(Country=countries,
+           MeanLifeExp=storage)
+```
+
+Now let's tackle a more complex example: a bootstrap. 
+
+What is a bootstrap?
+
+The bootstrap is a statisical procedure that allows us to estimate standard errors for ANY statistic that we want. This procedure, as notes Aronow and Miller in `Theory of Agnostic Statistics` is usually consistent. If we KNOW the sampling distribution that we are sampling from, then we don't need a bootstrap. We know that the sampling distribution of proportion of head flips of a fair coin over a large number of trials approaches mean .5 and variance (1/4)*n. 
+
+```{r}
+results <- rep(NA,1000)
+for(i in 1:1000){
+  heads <- sample(c(0,1),1000,replace=T)
+  results[i] <- mean(heads)
+  print(paste('Completed trial', i, sep=' '))
+}
+mean(results) #should be 0.50
+var(results) #should be 0.00025
+hist(results)
+```
+
+But we don't always know the distribution we are sampling from. The bootstrap helps us solve this problem by pretending that the distribution we are sampling from looks exactly like the sample that we have. This is the resampling method. The steps are:
+
+1) Take with replacement a sample of size n from your sample.
+
+2) calculate your estimate (mean, or whatever statistic you want) using this sample that you bootstrapped
+
+3) repeat steps 1 and 2 many times
+
+4) Using the collection of bootstrap estimates you can calculate the standard deviation of the bootstrap distribution of the estimator. This will *usually* estimate the true standard error. If the distribution is normal, which it usually is, you can calculate your p-values and confidence intervals as you normally would.
+
+Let's try it. Say we want to bootstrap the standard error of a coefficient for a simple linear model.
+
+Before we do this I'm going to create a fake dataset that has two variables, an x (independent variable) and a y (dependent variable). Notice that I'm using some of the functions we learned yesterday here:
+
+```{r}
+x <- rnorm(10000) # create an x variable of random draws from standard normal
+alpha <- 0.5 # here is my intercept
+beta <- 1.2 # my true beta coefficient
+epsilon <- rnorm(10000,0,.5) # my error term
+y <- alpha + x*beta + epsilon # here is y as a function of x * beta + the intercept and the natural error
+myDat <- data.frame(y,x) #combine into dataset
+```
+
+Let's look at the data to see what it looks like:
+
+```{r}
+head(myDat) #look at head of dataset
+plot(myDat$x,myDat$y)
+abline(v=0,h=0,col='red') # lines through origin
+abline(a = 0.5,b = 1.2,col='grey') # best fit regression line
+```
+
+If we use the linear regression function in r, we can estimate the coefficient and standard error:
+
+```{r}
+summary(lm(y ~ x, myDat))
+```
+
+So it looks like the coefficient is, indeed, 1.2, as we set it. The standard error is approximately 0.005. We can also bootstrap this estimation to reproduce the standard error.
+
+Here are the steps in R. Let's see how similar it is.
+
+- create a bin to store results (note, always pre-allocate space in the storage bin).
+
+```{r}
+storage <- rep(NA, 1000)
+```
+
+Now each time we sample data we need to sample with replacement. What does this mean? Let's look at the sample function again:
+
+```{r}
+set.seed(123) # for replication purposes!
+samp <- sample(1:5,10,replace=T)
+samp
+```
+
+This is saying take the numbers 1 through 5 and pull 10 numbers from this sequence. Each time you pull one, store it, and put it back. This results in the repetition of certain values.
+
+```{r}
+table(samp)
+```
+
+Notice that we have 1 two times, 2 two times, 3 two times, 4 only one time, and 5 three times. 
+
+The next thing to do is the calculate the statistic you want with this bootstrapped dataset. Here we will regress y on x:
+
+```{r}
+lm.out <- lm(y ~ x, myDat)
+coef(lm.out) #this extracts the coefficients from the regression object. We're only interested in the second
+```
+
+Then we store the coefficient of interest, that of x, in the storage container:
+
+```{r}
+storage[1] <- coef(lm.out)[2]
+storage
+```
+
+And repeat n times. 
+
+Together it looks like this:
+
+For i is from 1 to 1000: #1000 is convention but you can do more
+  sample random row indices with replacement
+  subset the dataset to create a new dataset using the random digits from the previous step
+  run the model and save to an object
+  pull out and save the beta estimate of interest
+End of Loop
+
+Let's put it all together in a single loop:
+  
+```{r}
+# pre allocate storage
+storage <- rep(NA, 1000)
+
+#write the loop
+set.seed(123)
+for(i in 1:1000){ 
+  boot_indices <- sample(1:nrow(myDat), replace=T)
+  boot_data <- myDat[boot_indices,]
+  lm.out <- lm(y ~ x, boot_data)
+  storage[i] <- coef(lm.out)[2]
+  print(paste('Bootstrap run', i,sep=' '))
+}
+start.time <- Sys.time()
+#run some loop
+Sys.time() - start.time 
+
+mini_dat <- data.frame(x=sample(1:5,5),
+                       y=sample(1:9,5))
+sample_n(mini_dat,size=nrow(mini_dat),replace=T)
+
+
+
+```
+
+Let's look at the results
+
+```{r}
+storage
+```
+
+Let's look at the distribution:
+
+```{r}
+hist(storage)
+plot(density(storage))
+abline(v=1.2,col='red')
+abline(v=mean(storage),col='grey')
+text(x=1.21,y=70,labels = 'True Coefficient Mean',col='red')
+text(x=1.185,y=70,labels = 'Bootstrapped Coefficient\nMean',col='grey')
+```
+
+That looks normally distributed to me. Let's look at the stats:
+
+```{r}
+mean(storage)
+sd(storage)
+```
+
+Let's compare back
+
+```{r}
+plot(density(storage))
+abline(v=1.2,col='red')
+abline(v=mean(storage),col='grey')
+text(x=1.21,y=70,labels = 'True Coefficient Mean',col='red')
+text(x=1.185,y=70,labels = 'Bootstrapped Coefficient\nMean',col='grey')
+```
+
+You'll notice they are about the same!
+
+In sum: when you first run loops, best to break it into piece and do them separately, as I did, and construct the full loop. The first time through, run the loop just 5 or 10 times to check that it is working properly.
+
+---------
+# Exercise
+---------
+
+Use the boostrap to estimate the standard error of the coefficient of fuel efficiency (`mpg`) as a function of car weight  (`wt`) mpg ~ wt in the gapminder dataset
+
+```{r}
+library(car)
+mtcars
+
+# regression formula
+summary(lm(mpg ~ wt,data=mtcars)) 
+```
+
+```{r}
+#storage container for results
+results <- rep(NA, 1000)
+# loop 1000 times, each time sample data with replacement and run regression
+# extract the coefficient of interest and save it in the storage container
+for(i in 1:1000){
+  # creat boot dataset
+  boot_data <- sample_n(mtcars,nrow(mtcars),replace=T)
+  
+  #run regression
+  lm.out <- lm(mpg ~ wt, boot_data)
+  
+  #save results
+  results[i] <- coef(lm.out)[2]
+  
+}
+
+# plot the results in a density plot in base R
+plot(density(results))
+
+#check mean and standard deviation
+mean(results)
+sd(results)
+
+#check how it compares to the lm package estimate of the standard error
+summary(lm(mpg~wt,mtcars))
+```
+
+Now we can combine the function with the loop to bootstrap any regression coefficient you want.
+
+```{r}
+bootstrap_lm <- function(formula, data, number_bootstraps){
+  
+  # Bootstraps the standard error for bivariate point estimate
+  #
+  # Args:
+  #     formula: Bivariate regression formula
+  #     data: dataframe
+  #     number_bootstraps: number of times to bootstrap 
+  #
+  # Returns:
+  #   The coefficient, boostrapped standard error, 95% confidence intervals
+  #   and a plot of the boostrapped coefficients with the mean
+  
+  bin <- rep(NA, number_bootstraps) #container
+  for(i in 1:number_bootstraps){
+      dfboot <- sample_n(data,nrow(data),replace = T) #create new dataset
+      lm_out <- lm(formula, data=dfboot) #run model 
+      coef_out <- coef(lm_out)[2] #pull out coefficient of interest
+      bin[i] <- coef_out #store in storage bin
+      print(paste('Boostrap number',i,sep=' '))
+  }
+  results <- list(coef=mean(bin), #put results in list
+       se = sd(bin), 
+       lower = quantile(bin, 0.025),
+       upper = quantile(bin, 0.975))
+  plot(density(bin)) #plot results
+  abline(v=mean(bin))
+  print(results)
+}
+
+bootstrap_lm(mpg ~ wt, mtcars, 2500) #bootstrapped standard error
+lm.out <- lm(form,data=mtcars) #asymptotic standard error
+summary(lm.out)
+```
+
+it looks like the standard errors here are a little smaller the bootstrap. 
+
+Some closing thoughts on loops. First, I only showed you the for loop. You can also use while and repeat loops. I don't really ever use these, so I am not going to teach them, but they are worth looking up on your own (and I think are covered in the datacamp class). Second, loops are SLOW in R. It is best to try and figure out how to do things using vectorized methods. There is almost always a vector solution to any iterative process you want to undertake. There is now a dplyr() and broom version of the bootstrap:
+
+```{r}
+library(broom)
+mtcars %>%
+  bootstrap(1000) %>%
+  do(tidy(lm(mpg ~ wt,.)))
+```
+
+There are our estimates for the coefficient and standard errors and p-values, etc. You can pull those out:
+
+```{r}
+mtcars %>%
+  bootstrap(1000) %>%
+  do(tidy(lm(mpg ~ wt,.))) %>%
+  filter(term=='wt') %>%
+  group_by(term) %>%
+  summarise(mean.coef = mean(estimate),
+            mean.sd = sd(estimate))
+```
+
+And there you have it!
+
+-------
+# Replicate Function
+-------
+
+Anything you can do with a loop you can also do with replicate. Replicate simply takes some function you give it and re-runs it n times. For instance, let's do the bootstrap with replicate. I create a function called boot which takes the data, samples with replacement, runs the regression of interest, and pulls out the covariate for conservative. Then you use the replicate function to run it 1000 times. 
+
+```{r}
+boot <- function(){
+  boot_dat <- sample_n(mtcars, nrow(mtcars), replace=T)
+  out <- coef(lm(mpg ~ wt,boot_dat))[2]
+  return(out)
+}
+out <- replicate(1000,boot())
+mean(out)
+sd(out)
+```
+
+Easy!
+
+-------
+# Apply
+-------
+
+Finally, let's take a few minutes to look at vectorized operations that are MUCH faster than loops.
+
+Like the for loop, apply lets you do something repetitively to some array of data. The basic syntax of apply is
+
+`apply(data, margin, function)`
+
+Here is some fake data to play with:
+
+```{r}
+probMat <- matrix(rnorm(1000),20)
+```
+
+Where your data is your dataframe or matrix of data, it needs to be a 2 dimensional array, margin is whether you want it to operate on every row (1) or every column (2) (these are the only two options), and finally, function is what you want to do to every row or column. Let's look at the maximum value in every column in the matrix:
+
+```{r}
+apply(probMat,2,max)
+```
+
+I can also write my own function to use in that last argument. Let's say I want to take extract the fifth element of each row:
+
+```{r}
+apply(probMat,1, function(x) x[5])
+``` 
+
+This is VERY fast and is useful for very large datasets.
+
+The apply family also has other functions: `lapply()`,`vapply()`,`sapply()`,`mapply()`,`rapply()`,`tapply()` each depending on the format of the data you want to look at. Let's say you have a list of character strings and you want to just extract the first word from each item in the list. 
+
+For example, let's take the country names and split it into a list
+
+```{r}
+install.packages('stringr')
+library(stringr)
+samp <- str_split(gapminder$country,' ')
+samp[1667]
+```
+
+Check out what happens
+
+```{r}
+lapply(samp, function(x) x[1])
+```
+
+sapply does the same thing but collapses the list back into a vector
+
+```{r}
+sapply(samp, function(x) x[1])
+
+#you can also use unlist
+unlist(lapply(samp, function(x) x[1]))
+```
+
+You can look up mapply() and vapply() on your own. I've never used them!
+
+-----
+# Exercise
+-----
+
+Use apply to find the mean of each row in probMat.
+
+```{r}
+?apply
+apply(probMat, 1, mean)
+```
+
+Find the median of each column
+
+```{r}
+apply(probMat, 2, median)
+```
+
+Now find the mean of the first 10 values of each row of probMat:
+
+```{r}
+apply(probMat, 1, function(x) mean(x[1:10]))
+apply(probMat[,1:10], 1, mean)
+
+mean_each_row <- rep(NA,nrow(probMat))
+for(i in 1:nrow(probMat)){
+  mean_each_row[i] <- mean(probMat[i,])
+}
+mean_each_row
+
+```
+
+#####
+# DPLYR
+#####
+
+Now, if we have time, let's take a look at how dplyr works. Let's load a dataset first:
+
+```{r}
+rm(list=ls()) #clear working memory
+library(tidyverse)
+
+#using the url below, load the new data, make sure strings are read in as character strings, and assign it to a dataframe called `df`
+file <- "http://tylerreny.github.io/data/cleaned_anes_2016_r_course.csv"
+
+#
+df <- read_csv(file)
+
+#now look at the variables
+glimpse(df)
+```
+
+One of the most important things to be able to do quickly and effortlessly is summarize your data. You want to know if those who are high in racial resentment feel more negatively towards Obama than those who are low in racial resentment. You might have a dataset where you have population per county per state but you want statewide population, so you have to combine counties by state. You might want to figure out which continent has the highest GDP per capita but only have country level data. 
+
+Here I introduce you to some handy functions in the `dplyr()` package that help you easily calculate these quantities of interest. Dplyr() is a package by Hadley Wickham, whom you will learn more about if you stick with R. Check him out. 
+
+Remember that any package is just a collection of functions already coded up for you. Dplyr is build around 5 core functions:
+
+- select(): this function subsets your dataset to just the columns of data (variables you want)
+
+The base R equivalent would simply be `df[,c(vars of interest)]`
+
+- filter(): this function subsets the data into just the rows you want to look at
+
+The base R equivalent would be `subset()` or simply `df[c(rows),]`
+
+- arrange(): this function sorts the data by row(s) of your choosing
+
+The base R equivalent is `sort()`
+
+- mutate(): this function adds new variables to your dataframe
+
+The base R equivalent is simply `df$newvar` or `df[,'newvar']`
+
+- summarise(): this function allows you to summarise your data in someway; usually used in conjunction with group_by() which allows you to summarise data by some other variable.
+
+This last one is not a core function but it is super useful:
+
+- group_by(): this function groups your data according to a variable you give it. 
+
+Before we get to examples with each function let's look at the pipe operator
+
+----------
+#Meet the new pipe operator
+----------
+
+One of the cool things about `dplyr()` is the pipe operator `%>%` which you have seen above. It helps make your code nice and easy to read, moving us away from base R nesting doll syntax and into something that reads more fluidly:
+
+```{r}
+df %>% head
+head(df)
+```
+
+What is the pipe actually doing? Taking the first argument and passing it to the first argument in the following function:
+
+```{r}
+# this reads take my dataframe called df and show me the first 10 rows of it using head()
+df %>% head(10)
+
+# it is the same as
+head(df, 10)
+```
+
+Whenever you see the pipe, say the words "then" in your head.
+
+```{r}
+foo <- df[df$race %in% c(1,2),c('republican_pid7','conservative')]
+head(foo,10)
+
+select <- dplyr::select
+df %>%
+  filter(race %in% c(1, 2)) %>%
+  select(republican_pid7, conservative) %>% #see if anyone has errors here with select, may need to use dplyr::select
+  head(10)
+```
+
+This reads: take my dataset called df, then filter by race to only white and black respondents, then select just two variables of interest, partisanship and ideology, then show us just the first 10 rows of that new dataframe.
+
+------
+# Select
+------
+
+Say you want to look at just certain variables. 
+
+```{r}
+df %>% 
+  select(income_family)
+```
+
+NOTE: Depending on which packages you have installed, you may need to put `dplyr::` in front of the select function so it knows that you want the dplyr select() function, not some other select function.
+
+This is the same as in base R:
+
+```{r}
+df[,'income_family']
+
+#or
+df$income_family
+```
+
+You can select more than one variable
+
+```{r}
+df %>% 
+  select(income_family, race)
+```
+
+Or some sequence of variables
+
+```{r}
+df %>% 
+  select(rr1rc:rr4rc)
+```
+
+You can get rid of variables you don't want, too.
+
+```{r}
+#create a sample dataframe with just two variables, rubio thermometer and race.
+samp <- df %>% 
+  select(therm_rubio,race)
+head(samp)  #look at the head
+
+#now use the minus sign to get rid of one of the two variables
+samp %>%
+  select(-therm_rubio) %>%
+  head #look at the head
+```
+
+You can also filter by variables that contain certain strings
+
+```{r}
+df %>% 
+  select(dplyr::contains('therm')) %>%
+  head
+```
+
+Variables that start with some character string
+
+```{r}
+df %>%
+  select(starts_with('rr')) %>%
+  head
+```
+
+Now for a small exercise. First using base R, then using dplyr, create dataframes that contain just the last 7 variables in the dataset that we loaded in earlier:
+
+```{r}
+# first identify the names of the last 7 variables
+
+
+# now using base R functions, create a dataframe of just those seven variables
+
+
+# now using dplyr do the same
+
+
+
+```
+
+------
+# Filter
+------
+
+`filter()` allows you to subset by rows
+
+Let's say you want to look at some patterns in the data among just white respondents.
+
+One way would be to create smaller dataframes that contain subsections of the data:
+
+```{r}
+#using base R, you can do this by using the subset function
+white_respondents <- subset(df, race == 1)
+nrow(white_respondents)
+
+#or you can use brackets
+white_respondents <- df[df$race==1,]
+#this above reads, take my dataframe and subset it to just the rows where race == 1
+nrow(white_respondents)
+```
+
+Okay, great, you have an extra dataframe now. Stop and ask youself: `Do I want to create mini datasets for every level of the factor to compute something?`
+
+The answer should be no. Copies and excerpts of your data clutter your workspace, invite mistakes, and sow general confusion. Avoid whenever possible. 
+
+You can save yourself from having to make an extra dataframe by subsetting the data within the function calls. This will save you mistakes. Let's say you want to look at mean thermometer ratings among whites.
+
+The bad way is:
+
+```{r}
+white_respondents <- subset(df, race == 1)
+mean(white_respondents$therm_obama,na.rm=T)
+```
+
+A better way is to subset the data within the function, as noted above:
+
+```{r}
+mean(df$therm_obama[df$white==1], na.rm=T)
+```
+
+Notice that this approach doesn't create a new dataframe that will clutter your workspace.
+
+You can use this subset within any function. Want to regress Obama feeling thermometer on partisanship for just whites? Easy, subset in the `lm()` function.
+
+```{r}
+summary(lm(therm_obama ~ republican_pid7, data = df[df$race==1,], weights = weight)) #notice how subset is within the function itself
+```
+
+Using the dplyr filter() function with the pipe is similar
+
+```{r}
+df %>% 
+  filter(race==1)
+
+df %>% #returns a dataframe of just white republican respondents
+  filter(race==1 & pid7 > 4) %>%
+  nrow
+
+df %>% #returns a dataframe of just white republican college educated respondents
+  filter(race==1 & pid7 > 4 & educ > 4)  %>%
+  nrow
+```
+
+Notice above that you can use inequalities in the filter() argument.
+
+---------
+# Arrange
+---------
+
+Dplyr has an `arrange()` function to order the data. This is more useful when you have continuous variables with large numbers of values and you want to look at the extremes. This is super useful when you have country data and want to know which country has the highest or lowest of X variable.
+
+For this example I'm going to use the gapminder country data, which is more appropriate for this example
+
+```{r}
+library(gapminder) #install the package if you need it
+glimpse(gapminder)
+```
+
+Say you want to look at which country has the highest life expectancy:
+
+```{r}
+gapminder %>%
+  arrange(desc(lifeExp)) %>%
+  select(country,lifeExp,year) %>%
+  head
+```
+
+Okay, great, Japan. But notice this data is arranged by country-year. That doesn't makes sense. Let's just look at highest life expectancy in the latest year in the data.
+
+```{r}
+range(gapminder$year) #first, find the latest year in the data
+gapminder %>%
+  filter(year == 2007) %>%
+  arrange(desc(lifeExp)) %>% 
+  head
+```
+
+You can arrange by several variables, too. Let's say we want to arrange by year and gdpPercap. This means you won't have to use the filter function
+
+```{r}
+gapminder %>%
+  arrange(desc(year),desc(gdpPercap))
+
+#or by continent
+gapminder %>%
+  filter(year == 2007) %>%
+  arrange(desc(continent),desc(gdpPercap)) %>%
+  select(year, continent, gdpPercap) %>%
+  head()
+```
+
+----------
+# Mutate
+----------
+
+Use `mutate()` to add new variables (columns) to your dataframe. 
+
+Let's say you want to log population. In base r, this would look like:
+
+```{r}
+hist(gapminder$pop) #notice that it is quite skewed
+plot(density(gapminder$pop))
+boxplot(gapminder$pop)
+
+#so it makes sense to log it
+gapminder$log_pop <- log(gapminder$pop)
+hist(gapminder$log_pop) #notice that it is quite skewed
+plot(density(gapminder$log_pop))
+boxplot(gapminder$log_pop)
+
+#notice how nicely distributed it is now.
+```
+
+You can do this quite easily in dplyr, too:
+
+```{r}
+gapminder %>% 
+  mutate(log_pop = log(pop)) %>% 
+  select(log_pop) %>%
+  ggplot(aes(log_pop)) + geom_density() + theme_bw()
+```
+
+And in fact, dplyr makes it easy to make a whole bunch of new variables
+
+```{r}
+gapminder %>%
+  mutate(log_pop = log(pop),
+         lifeExp_squared = lifeExp^2,
+         pop_div = pop/100,
+         new_var = pop)
+```
+
+You can even manipulate variables you create within the same function call:
+
+```{r}
+gapminder %>%
+  mutate(log_pop = log(pop),
+         lifeExp_squared = lifeExp^2,
+         lifeExp_squared2 = lifeExp_squared/100) #notice that this one takes the variable created in the line above
+```
+
+This is jumping ahead, but these are all useful when you want to look at trends in data. Here I am going to use dplyr and ggplot to show change in logged population by continent over time
+
+```{r}
+gapminder %>%
+  mutate(log_pop = log(pop)) %>%
+  group_by(continent,year) %>%
+  summarise(mean_log_pop = mean(log_pop,na.rm=T)) %>%
+  ggplot(aes(year,mean_log_pop,color=continent)) + geom_line() +
+  theme_bw()
+```
+
+Or we can do the same in small multiples
+
+```{r}
+gapminder %>%
+  mutate(log_pop = log(pop)) %>%
+  group_by(continent,year) %>%
+  summarise(mean_log_pop = mean(log_pop,na.rm=T)) %>%
+  ggplot(aes(year,mean_log_pop)) + geom_line() +
+  facet_wrap(~continent) + theme_bw()
+```
+
+--------
+# Summarise
+--------
+
+My single favorite combination of functions in Dplyr is `group_by()` and `summarise()`. Notice how I used this combination above when making those plots.
+
+`group_by()` lets you do computation within groups. Say you want to take the mean rating towards Obama by each level of partisanship with confidence intervals on the mean estimate.
+
+```{r}
+pid7_obama <- df %>% 
+  group_by(republican_pid7) %>% 
+  summarise(mean_ftobama = weighted.mean(therm_obama, wt=weight, na.rm=T),
+            lower = mean_ftobama - 1.96*sd(therm_obama,na.rm=T)/sqrt(n()),
+            upper = mean_ftobama + 1.96*sd(therm_obama,na.rm=T)/sqrt(n())) %>% 
+  round(2) %>%
+  na.omit()
+pid7_obama
+```
+
+Cool! It looks like attitudes towards Obama vary drastically by partisanship. Let's plot it. Don't worry about understanding this plot code. We'll get to it later.
+
+```{r}
+ggplot(pid7_obama, aes(x=republican_pid7, y=mean_ftobama)) + 
+  geom_point() + 
+  geom_segment(aes(x=republican_pid7, xend=republican_pid7, y=lower, yend=upper)) + 
+  labs(x='Republican PID7', y='Mean Obama Feeling Therm') +
+  scale_x_continuous(breaks=c(1,4,7),labels=c('Strong Dem','Independent','Strong Rep'))
+```
+
+You can add multiple commands to the same summarise function, as I did above
+
+```{r}
+fp <- df %>% 
+  group_by(pid7) %>%
+  summarise(obama = mean(therm_obama, na.rm=T),
+            rubio = mean(therm_rubio, na.rm=T),
+            difference=obama-rubio) %>%
+  na.omit()
+fp
+
+#plot it
+ggplot(fp, aes(x=pid7, y=difference)) + geom_line() +
+  labs(x='Republican PID7', y='Mean Obama Minus Rubio Therm') +
+  geom_hline(yintercept=0, color='red', linetype=2)
+```
+
+You can also subset data further within the summarise function. Let's say, for example, you wanted to look at Obama thermometer ratings for each level of partisanship but split out among blacks and whites separately. Rather than grouping by race variable, you can subset within summarise.
+
+```{r}
+df %>% 
+  group_by(pid7) %>%
+  summarise(obama_whites = mean(therm_obama[race==1], na.rm=T),
+            obama_blacks = mean(therm_obama[race==2], na.rm=T)) %>%
+  na.omit()
+```
+
+In sum, summarise returns a single summary statistic for each group.
+
+summarise_each() will provide the same call for each variable in the dataframe that you want. Say, for example, you have a datset of numerical values for counties in the US and you want summaries of those values by state.
+
+```{r}
+gapminder %>% 
+  filter(year == 2007) %>% 
+  select(lifeExp,pop,gdpPercap) %>%
+  summarise_each(funs(mean,median))
+```
+
+# Exercise combining everything you did above
+
+Using the gapminder data, figure out what the mean life expectancy is by continent in 1997 (hint: use filter,group_by, and summarise)
+
+```{r}
+
+
+
+```
+
+How about the mean logged population across all countries by year (hint: use mutate, group_by, and summarise)
+
+```{r}
+
+
+
+```
+
+Finally, how about the gdpPercap over time in just Vietnam (filter, select)
+
+```{r}
+
+
+
+```
+
+Find the mean and median of logged pop in Asia between 1962 and 1967
+
+```{r}
+
+
+
+```
+
+
+----------
+# Some closing thoughts for `dplyr()`
+----------
+
+Break the code into pieces, starting at the top, and inspect the intermediate results. These commands do not leap fully formed out of anyone’s forehead – they are built up gradually, with lots of errors and refinements along the way. I’m not even sure it’s a great idea to do so much manipulation in one fell swoop. Break it up if that helps. Your code should be easy to write and read when you’re done.
+
+Here is a cheat sheet to refer back to when you have questions: `https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf?version=0.99.687&mode=desktop`
+
+
