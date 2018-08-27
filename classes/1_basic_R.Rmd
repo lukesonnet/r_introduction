@@ -7,7 +7,7 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, error = TRUE)
 ```
 
 Much of this course comes from materials created by [Tyler Reny](http://tylerreny.github.io/).
@@ -24,6 +24,8 @@ x <- 3 + 4
 x
 ```
 
+Most of the time, you will work in an RMarkdown document or in a .R script, which is similar to a .do file, for those of you familiar with Stata.
+
 ## Why R?
 
 * R is free, and open-source
@@ -37,7 +39,7 @@ x
 
 For each major version of R (3.4, 3.5, etc.) you need to install a series of packages that greatly enhance the usability of R. Let's look at how we interact with packages.
 
-```{r}
+```{r, eval=1}
 # what is loaded?
 search()
 
@@ -87,6 +89,16 @@ In R you will mostly want to be saving your work in objects that you use in late
 - on the left if the variable name of the object where I am storing things
 - to the right is whatever I want to put into my object
 
+```{r}
+x <- 5 - 4
+x
+```
+
+**Exercise:** Create a variable called `y` and store in it the square root of 4.
+
+```{r}
+```
+
 Let's create a simple vector!
 
 ```{r}
@@ -94,13 +106,13 @@ x <- c(1, 2, 3)
 x
 ```
 
+What was that `c()` function used `x` object? Simply it's the combine function that is used all the time in R to create vectors and other objects.
+
 We can always inspect an object with the `str()` function. This is a super helpful function I use all the time to check out what I'm working with.
 
 ```{r}
 str(x)
 ```
-
-What was that `c()` function above we used to create the `x` object? Simply it's the combine function that is used all the time in R to create vectors and other objects. Let's learn more about it.
 
 ## Getting help
 
@@ -131,6 +143,58 @@ str(z)
 **Exercise**: Use the `as.numeric()` function to change the `z` object to a numeric vector and then save the sum as `z_num`. Look at the `?as.numeric` help if you aren't sure how to use it!
 
 ```{r}
+```
+
+## Different kinds of vectors
+
+There are four main kinds of vectors you'll be working with. Numbers (which is both "numeric" and "integer"), letters ("character"), true/false ("logical", also called boolean in other languages), and "factors". Let me briefly introduce them all here.
+
+```{r}
+# numeric
+x <- c(1.1, 0.3, 4.4)
+class(x)
+str(x)
+x/3
+
+# integer
+x <- c(1L, 2L, 3L)
+class(x)
+x <- 1:3
+class(x)
+str(x)
+x/3
+str(x/3)
+
+# character
+x <- c("a", "b", "87")
+class(x)
+str(x)
+x/3
+
+# logical
+x <- c(TRUE, FALSE, TRUE)
+class(x)
+str(x)
+x/3 # huh?
+
+# the fact that R will often treat FALSE as 0 and TRUE as 1
+# when needed is very handy in _many_ instances
+x <- c("a", "b", "a")
+x
+# Say we want to count the number of "a"s in this vector
+# we can use table
+table(x)
+# or we can sum the number of times there is an "a"
+x == "a"
+sum(x == "a")
+
+# factor
+x <- factor(c("a", "b", "a"))
+x
+class(x)
+str(x)
+levels(x)
+is.ordered(x) # can add order using `levels=` argument
 ```
 
 ## More work with numbers and vectors
@@ -214,12 +278,14 @@ length(a_vector)
 str(a_vector)
 class(a_vector)
 summarize(a_vector)
+
 # functions that summarize your object in one number
 sum(a_vector)
 mean(a_vector)
 median(a_vector)
 max(a_vector)
 min(a_vector)
+
 # functions that keep your object the same length but apply a function
 # to each element (vectorized)
 abs(a_vector)
@@ -240,6 +306,11 @@ attr(a_vector, "names")
 names(a_vector)
 ```
 
+**Exercise:** Create a vector of four numbers using the `c()` and store it in a variable. Create a second vector of four numbers and store it in a variable. Add the two vectors together and take the `sum()` of the added vector.
+
+```{r}
+```
+
 ## Special values
 
 One more crucial thing to introduce is some special values, such as the `NA` value.
@@ -253,7 +324,7 @@ is.na(na_vector)
 mean(na_vector)
 ```
 
-**Exercise**: Use the above `na_vector` vector and use the `?mean` help to write code that gets the mean ignoring the missing value.
+**Exercise**: Use the above `na_vector` vector and use the `mean()` functino to get the mean of `na_vector`, ignoring the missing value. Use the `?mean` help.
 
 ```{r}
 ```
@@ -346,6 +417,11 @@ na_vector[c(NA, NA, TRUE)]
 na_vector[c(NA, TRUE, TRUE)]
 ```
 
+**Exercise:** Create a numeric vector using the `c()` function of length 4. Add the first two elements of the vector to the last two elements of the vector.
+
+```{r}
+```
+
 ## Matrices
 
 I'm only going to do a brief introduction to matrices, as I want to move on to the main data structures you'll be using.
@@ -420,7 +496,7 @@ rowSums(mat3)
 colSums(mat3)
 ```
 
-We can also smush matrices together using `rbind` or `cbind`.
+We can also append matrices using `rbind` or `cbind`.
 
 ```{r}
 cbind(mat, mat2)
@@ -436,7 +512,7 @@ rbind(mat, mat2)
 
 There are many ways to create fake data. Mostly we have just generated vectors using the `1:n` syntax or using the combine function `c(1.0, -1, 3)`. Now I'll cover more statistically grounded ways to generate data. First, you can draw data from a wide range of distributions.
 
-First let's look at the helpfile for `rnorm()`.
+First let's look at the help-file for `rnorm()`.
 
 ```{r}
 rnorm(n = 4)
@@ -453,7 +529,7 @@ rbeta(n = 4, shape1 = 1, shape2 = 3.4)
 ?runif
 ```
 
-Another useful fuction is `sample`. It can be used many ways. Let's explore some of them.
+Another useful function is `sample`. It can be used many ways. Let's explore some of them.
 
 ```{r}
 sample(3) # if given an integer, just randomly orders a sequence starting at 1
@@ -520,6 +596,9 @@ head(dat)
 str(dat)
 nrow(dat)
 ncol(dat)
+names(dat)
+colnames(dat)
+rownames(dat)
 
 View(dat)
 dat["x"]
@@ -531,7 +610,28 @@ dat$x
 str(dat$x)
 ```
 
-You'll notice `z` is a factor. We'll talk more about that later, but it's like a labeled variable in Stata, where there is some text label for some numeric values that show up in the data. This happens when you use base R data.frame constructors and character vectors. When we get to the tidyverse we will often avoid factors.
+A function I love for categorical variables is the `table()` function, which just tabulates variables.
+
+```{r}
+table(dat$z)
+
+# Cross-tab whether X is negative with z
+dat$negative_x <- dat$x < 0
+table(dat$z, dat$negative_x)
+```
+
+You'll notice `z` is a factor. We'll talk more about that later, but it's like a labeled variable in Stata, where there is some text label for some numeric values that show up in the data. This happens when you use base R data.frame constructors and character vectors. When we get to the tidyverse we will often avoid factors. Let's recreate the data but without `z` as a factor. Note, we can also use vectors we've created earlier.
+
+```{r}
+x_vec <- rnorm(10)
+dat <- data.frame(
+  x = x_vec,
+  y = rnorm(10),
+  z = letters[1:10],
+  stringsAsFactors = FALSE
+)
+?data.frame
+```
 
 Subsetting data.frames works a lot like subsetting matrices. There are many options:
 
@@ -546,6 +646,11 @@ samp_id
 dat[samp_id, ]
 # Also can directly sample
 dat[sample(nrow(dat), size = 5), ]
+dat[dat$x > 0, ]
+dat[dat$z == "a", ]
+# Also can use subset
+subset(dat, x > 0)
+subset(dat, z == "a")
 ```
 
 You can edit columns of a data.frame just as you would an individual vector.
@@ -555,7 +660,7 @@ dat$x_y <- dat$x + dat$y
 head(dat)
 ```
 
-We'll manipulate data.frames more tomorrow using the `tidyverse`. Let's just load it here to use some convience functions.
+We'll manipulate data.frames more tomorrow using the `tidyverse`. Let's just load it here to use some convenience functions.
 
 ```{r}
 library(tidyverse)
@@ -569,6 +674,54 @@ samp_id
 
 Let's read in our first file! Most of the time in R and in general I like to work with `.csv` files. These are Comma-Separated Value files. They are simple plain text files that have no bells and whistles, just raw data that can easily be read by many pieces of software.
 
-## Exercise
+```{r}
+?read.csv
+dat <- read.csv("data/qog/qog_crossec.csv")
+str(dat) # hmmm
 
-load a dataset, get the mean of some column by some other group that you care about
+dat2 <- read.csv("data/qog/qog_crossec.csv", sep = ";", dec = ",")
+dat2[1:5, 1:5]
+#str(dat2)
+
+dat <- read.csv2("data/qog/qog_crossec.csv")
+dat[1:5, 1:5]
+# Can also remove factors
+dat <- read.csv2("data/qog/qog_crossec.csv", stringsAsFactors = FALSE)
+dat[1:5, 1:5]
+
+# Tidyverse (faster, automatically no factors)
+dat <- read_csv("data/qog/qog_crossec.csv") # same problem
+dat <- read_csv2("data/qog/qog_crossec.csv")
+dat[1:5, 1:5]
+class(dat)
+```
+
+**Exercise:** Read the csv at this url ("https://keybase.pub/hrbrmstr/data/mtcars.csv") and get the average miles per gallon (`mpg`) overall. Then subset to each each number of cylinders (`cyl`) and get the average miles per gallon of each cylinder.
+
+```{r}
+```
+
+We can also use the `haven` package which to easily read Stata .dta files.
+
+```{r}
+library(haven)
+dat <- read_dta("data/PSLM 2013-14/PSLM+_Stata+12+format_.dta")
+head(dat)
+glimpse(dat)
+
+# check labels
+attributes(dat$s2aq01)$label
+```
+
+## Exercise 1
+
+1. Create a character vector of length 3 filled in with any values you want.
+2. Create a vector of length 100 sampling from the above vector. `sample()` command.
+3. Create a data.frame with 100 rows. One column should be the letters you've created above. Then create three more numeric columns using three of the random number generators we dicussed above (e.g. `rnorm`).
+4. Using either regular `[` subsetting or using the `subset()` function, calculate the mean of each of these three numeric columns *for each value of the initial character vector you created.*
+
+
+## Exercise 2
+
+1. Load a dataset of the 2018 Pakistani General election results in to a data.frame: https://raw.githubusercontent.com/colincookman/pakistan_election_results_2018/master/pk_constituency_data_2018.csv
+2. Look at summaries of average winners by party, province, district; what summaries can you think of? Hint: remember we can count how often something happens by creating a boolean vector (e.g. `dat$winner == 1` and the summing the TRUE values in that vector).
