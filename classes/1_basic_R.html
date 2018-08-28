@@ -672,37 +672,37 @@ apply(mat3, 1, sum, na.rm = TRUE)</code></pre>
 <p>There are many ways to create fake data. Mostly we have just generated vectors using the <code>1:n</code> syntax or using the combine function <code>c(1.0, -1, 3)</code>. Now I’ll cover more statistically grounded ways to generate data. First, you can draw data from a wide range of distributions.</p>
 <p>First let’s look at the help-file for <code>rnorm()</code>.</p>
 <pre class="r"><code>rnorm(n = 4)</code></pre>
-<pre><code>## [1] -1.3588937  1.3586917  0.4394813  0.5587227</code></pre>
+<pre><code>## [1] -0.03608209 -1.11064690  0.25149965  0.58993044</code></pre>
 <pre class="r"><code>rnorm(n = 4, mean = 2, sd = 3)</code></pre>
-<pre><code>## [1]  4.9255223 -0.5981752  4.4839360  7.4574183</code></pre>
+<pre><code>## [1] 4.9915637 1.3328029 5.9804193 0.6026144</code></pre>
 <pre class="r"><code>rpois(n = 4, lambda = 20)</code></pre>
-<pre><code>## [1] 18 25 22 18</code></pre>
+<pre><code>## [1] 20 21  9 24</code></pre>
 <pre class="r"><code>rbinom(n = 4, size = 3, prob = 0.3)</code></pre>
-<pre><code>## [1] 0 1 0 3</code></pre>
+<pre><code>## [1] 2 2 1 0</code></pre>
 <pre class="r"><code>rbinom(n = 4, size = 1, prob = 0.5)</code></pre>
-<pre><code>## [1] 1 0 0 1</code></pre>
+<pre><code>## [1] 1 1 0 0</code></pre>
 <pre class="r"><code>rbeta(n = 4, shape1 = 1, shape2 = 3.4)</code></pre>
-<pre><code>## [1] 0.46100979 0.02639491 0.11730394 0.08829072</code></pre>
+<pre><code>## [1] 0.31325170 0.08219316 0.01386376 0.05338497</code></pre>
 <p><strong>Exercise:</strong> Use <code>runif</code> to draw 10 numbers from a continuous uniform distribution ranging from 3 to 4.</p>
 <pre class="r"><code>?runif</code></pre>
 <p>Another useful function is <code>sample</code>. It can be used many ways. Let’s explore some of them.</p>
 <pre class="r"><code>sample(3) # if given an integer, just randomly orders a sequence starting at 1</code></pre>
-<pre><code>## [1] 3 1 2</code></pre>
+<pre><code>## [1] 1 3 2</code></pre>
 <pre class="r"><code>sample(c(1.0, -3.2, 4.1)) # if given a vector, it randomly orders it</code></pre>
-<pre><code>## [1] -3.2  4.1  1.0</code></pre>
+<pre><code>## [1] -3.2  1.0  4.1</code></pre>
 <pre class="r"><code>sample(1:10, replace = TRUE) # can sample with replacement, defaults to same size vector</code></pre>
-<pre><code>##  [1] 7 8 4 8 4 2 3 4 6 3</code></pre>
+<pre><code>##  [1] 1 8 6 2 3 2 9 6 1 6</code></pre>
 <pre class="r"><code>sample(c(TRUE, FALSE), size = 10, replace = TRUE) # can sample with replacement, different size vector</code></pre>
-<pre><code>##  [1] FALSE FALSE FALSE  TRUE FALSE FALSE  TRUE  TRUE  TRUE  TRUE</code></pre>
+<pre><code>##  [1]  TRUE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE FALSE  TRUE</code></pre>
 <pre class="r"><code>sample(1:3, size = 10, replace = FALSE) # What does this error mean?</code></pre>
 <pre><code>## Error in sample.int(length(x), size, replace, prob): cannot take a sample larger than the population when 'replace = FALSE'</code></pre>
 <p>Often we can use sample to conveniently get a bunch of coin tosses for randomization and the like.</p>
 <pre class="r"><code>sample(0:1, size = 20, replace = TRUE)</code></pre>
-<pre><code>##  [1] 1 1 0 1 1 1 1 0 1 0 1 1 0 0 1 0 1 1 0 1</code></pre>
+<pre><code>##  [1] 0 0 1 1 1 1 1 1 1 1 1 1 0 0 1 1 1 0 0 1</code></pre>
 <pre class="r"><code>rep(0:1, each = 10)</code></pre>
 <pre><code>##  [1] 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1</code></pre>
 <pre class="r"><code>sample(rep(0:1, each = 10))</code></pre>
-<pre><code>##  [1] 1 0 0 1 1 1 0 1 1 0 1 1 0 0 1 0 0 1 0 0</code></pre>
+<pre><code>##  [1] 1 1 1 0 1 1 0 1 0 1 1 1 0 0 0 1 0 0 0 0</code></pre>
 </div>
 <div id="data.frames" class="section level2">
 <h2>data.frames</h2>
@@ -765,29 +765,29 @@ wallet</code></pre>
   z = letters[1:10]
 )
 dat</code></pre>
-<pre><code>##             x           y z
-## 1   0.4121154 -0.49376037 a
-## 2  -1.1600317 -1.33106820 b
-## 3   0.6582194  0.97025846 c
-## 4   0.1444868 -0.55640273 d
-## 5  -1.0167503 -0.39159768 e
-## 6   0.2530028 -0.28891014 f
-## 7  -1.3918709  0.51813818 g
-## 8   0.2983932  1.20235929 h
-## 9   0.4366307  1.65667258 i
-## 10  0.7333217  0.04676457 j</code></pre>
+<pre><code>##              x           y z
+## 1  -0.36246051  0.87749810 a
+## 2  -0.24139138  0.29766494 b
+## 3  -0.03538426 -0.94184258 c
+## 4   0.62855523 -0.03614148 d
+## 5  -0.55667506  1.26216639 e
+## 6   1.05601672 -0.74049779 f
+## 7  -0.49908470 -1.11393595 g
+## 8   0.15372736 -0.68307020 h
+## 9  -0.95282566  1.54580005 i
+## 10 -1.36928681  1.97390793 j</code></pre>
 <pre class="r"><code>head(dat)</code></pre>
-<pre><code>##            x          y z
-## 1  0.4121154 -0.4937604 a
-## 2 -1.1600317 -1.3310682 b
-## 3  0.6582194  0.9702585 c
-## 4  0.1444868 -0.5564027 d
-## 5 -1.0167503 -0.3915977 e
-## 6  0.2530028 -0.2889101 f</code></pre>
+<pre><code>##             x           y z
+## 1 -0.36246051  0.87749810 a
+## 2 -0.24139138  0.29766494 b
+## 3 -0.03538426 -0.94184258 c
+## 4  0.62855523 -0.03614148 d
+## 5 -0.55667506  1.26216639 e
+## 6  1.05601672 -0.74049779 f</code></pre>
 <pre class="r"><code>str(dat)</code></pre>
 <pre><code>## 'data.frame':    10 obs. of  3 variables:
-##  $ x: num  0.412 -1.16 0.658 0.144 -1.017 ...
-##  $ y: num  -0.494 -1.331 0.97 -0.556 -0.392 ...
+##  $ x: num  -0.3625 -0.2414 -0.0354 0.6286 -0.5567 ...
+##  $ y: num  0.8775 0.2977 -0.9418 -0.0361 1.2622 ...
 ##  $ z: Factor w/ 10 levels &quot;a&quot;,&quot;b&quot;,&quot;c&quot;,&quot;d&quot;,..: 1 2 3 4 5 6 7 8 9 10</code></pre>
 <pre class="r"><code>nrow(dat)</code></pre>
 <pre><code>## [1] 10</code></pre>
@@ -801,33 +801,33 @@ dat</code></pre>
 <pre><code>##  [1] &quot;1&quot;  &quot;2&quot;  &quot;3&quot;  &quot;4&quot;  &quot;5&quot;  &quot;6&quot;  &quot;7&quot;  &quot;8&quot;  &quot;9&quot;  &quot;10&quot;</code></pre>
 <pre class="r"><code>View(dat)
 dat[&quot;x&quot;]</code></pre>
-<pre><code>##             x
-## 1   0.4121154
-## 2  -1.1600317
-## 3   0.6582194
-## 4   0.1444868
-## 5  -1.0167503
-## 6   0.2530028
-## 7  -1.3918709
-## 8   0.2983932
-## 9   0.4366307
-## 10  0.7333217</code></pre>
+<pre><code>##              x
+## 1  -0.36246051
+## 2  -0.24139138
+## 3  -0.03538426
+## 4   0.62855523
+## 5  -0.55667506
+## 6   1.05601672
+## 7  -0.49908470
+## 8   0.15372736
+## 9  -0.95282566
+## 10 -1.36928681</code></pre>
 <pre class="r"><code>str(dat[&quot;x&quot;])</code></pre>
 <pre><code>## 'data.frame':    10 obs. of  1 variable:
-##  $ x: num  0.412 -1.16 0.658 0.144 -1.017 ...</code></pre>
+##  $ x: num  -0.3625 -0.2414 -0.0354 0.6286 -0.5567 ...</code></pre>
 <pre class="r"><code>dat[[&quot;x&quot;]]</code></pre>
-<pre><code>##  [1]  0.4121154 -1.1600317  0.6582194  0.1444868 -1.0167503  0.2530028
-##  [7] -1.3918709  0.2983932  0.4366307  0.7333217</code></pre>
+<pre><code>##  [1] -0.36246051 -0.24139138 -0.03538426  0.62855523 -0.55667506
+##  [6]  1.05601672 -0.49908470  0.15372736 -0.95282566 -1.36928681</code></pre>
 <pre class="r"><code>dat[, &quot;x&quot;]</code></pre>
-<pre><code>##  [1]  0.4121154 -1.1600317  0.6582194  0.1444868 -1.0167503  0.2530028
-##  [7] -1.3918709  0.2983932  0.4366307  0.7333217</code></pre>
+<pre><code>##  [1] -0.36246051 -0.24139138 -0.03538426  0.62855523 -0.55667506
+##  [6]  1.05601672 -0.49908470  0.15372736 -0.95282566 -1.36928681</code></pre>
 <pre class="r"><code>str(dat[[&quot;x&quot;]])</code></pre>
-<pre><code>##  num [1:10] 0.412 -1.16 0.658 0.144 -1.017 ...</code></pre>
+<pre><code>##  num [1:10] -0.3625 -0.2414 -0.0354 0.6286 -0.5567 ...</code></pre>
 <pre class="r"><code>dat$x</code></pre>
-<pre><code>##  [1]  0.4121154 -1.1600317  0.6582194  0.1444868 -1.0167503  0.2530028
-##  [7] -1.3918709  0.2983932  0.4366307  0.7333217</code></pre>
+<pre><code>##  [1] -0.36246051 -0.24139138 -0.03538426  0.62855523 -0.55667506
+##  [6]  1.05601672 -0.49908470  0.15372736 -0.95282566 -1.36928681</code></pre>
 <pre class="r"><code>str(dat$x)</code></pre>
-<pre><code>##  num [1:10] 0.412 -1.16 0.658 0.144 -1.017 ...</code></pre>
+<pre><code>##  num [1:10] -0.3625 -0.2414 -0.0354 0.6286 -0.5567 ...</code></pre>
 <p>A function I love for categorical variables is the <code>table()</code> function, which just tabulates variables.</p>
 <pre class="r"><code>table(dat$z)</code></pre>
 <pre><code>## 
@@ -838,16 +838,16 @@ dat$negative_x &lt;- dat$x &lt; 0
 table(dat$z, dat$negative_x)</code></pre>
 <pre><code>##    
 ##     FALSE TRUE
-##   a     1    0
+##   a     0    1
 ##   b     0    1
-##   c     1    0
+##   c     0    1
 ##   d     1    0
 ##   e     0    1
 ##   f     1    0
 ##   g     0    1
 ##   h     1    0
-##   i     1    0
-##   j     1    0</code></pre>
+##   i     0    1
+##   j     0    1</code></pre>
 <p>You’ll notice <code>z</code> is a factor. We’ll talk more about that later, but it’s like a labeled variable in Stata, where there is some text label for some numeric values that show up in the data. This happens when you use base R data.frame constructors and character vectors. When we get to the tidyverse we will often avoid factors. Let’s recreate the data but without <code>z</code> as a factor. Note, we can also use vectors we’ve created earlier.</p>
 <pre class="r"><code>x_vec &lt;- rnorm(10)
 dat &lt;- data.frame(
@@ -859,104 +859,108 @@ dat &lt;- data.frame(
 ?data.frame</code></pre>
 <p>Subsetting data.frames works a lot like subsetting matrices. There are many options:</p>
 <pre class="r"><code>dat[1:3, ]</code></pre>
-<pre><code>##            x          y z
-## 1 -0.6753829  0.5217765 a
-## 2  0.5515370 -1.4376633 b
-## 3 -0.3869582  1.6236885 c</code></pre>
+<pre><code>##           x          y z
+## 1 -1.246869 -0.4506314 a
+## 2  1.016432 -0.5136794 b
+## 3  1.611867  1.3498150 c</code></pre>
 <pre class="r"><code>dat[3:4, c(&quot;x&quot;, &quot;z&quot;)]</code></pre>
-<pre><code>##            x z
-## 3 -0.3869582 c
-## 4  1.3922049 d</code></pre>
+<pre><code>##          x z
+## 3 1.611867 c
+## 4 1.944383 d</code></pre>
 <pre class="r"><code>dat[3:4, 1:2]</code></pre>
-<pre><code>##            x          y
-## 3 -0.3869582  1.6236885
-## 4  1.3922049 -0.8081882</code></pre>
+<pre><code>##          x         y
+## 3 1.611867 1.3498150
+## 4 1.944383 0.7713335</code></pre>
 <pre class="r"><code>dat[, 1:2]</code></pre>
-<pre><code>##             x           y
-## 1  -0.6753829  0.52177654
-## 2   0.5515370 -1.43766331
-## 3  -0.3869582  1.62368847
-## 4   1.3922049 -0.80818824
-## 5  -0.3881691  0.41921696
-## 6  -1.4055429 -0.50141674
-## 7   1.2524571  0.02574029
-## 8  -1.4221560  0.73381924
-## 9   0.8815935 -0.41732847
-## 10 -0.7319329 -1.41771715</code></pre>
+<pre><code>##             x          y
+## 1  -1.2468690 -0.4506314
+## 2   1.0164320 -0.5136794
+## 3   1.6118668  1.3498150
+## 4   1.9443829  0.7713335
+## 5  -0.8916156  0.3317443
+## 6  -1.0683377  0.3157193
+## 7   0.3225091  0.3172222
+## 8   0.7449245  0.6914605
+## 9   1.8832827 -0.4555056
+## 10 -1.0793659 -2.0237192</code></pre>
 <pre class="r"><code>samp_id &lt;- sample(nrow(dat), size = 5)
 samp_id</code></pre>
-<pre><code>## [1] 8 6 2 1 5</code></pre>
+<pre><code>## [1] 3 5 7 2 1</code></pre>
 <pre class="r"><code>dat[samp_id, ]</code></pre>
 <pre><code>##            x          y z
-## 8 -1.4221560  0.7338192 h
-## 6 -1.4055429 -0.5014167 f
-## 2  0.5515370 -1.4376633 b
-## 1 -0.6753829  0.5217765 a
-## 5 -0.3881691  0.4192170 e</code></pre>
+## 3  1.6118668  1.3498150 c
+## 5 -0.8916156  0.3317443 e
+## 7  0.3225091  0.3172222 g
+## 2  1.0164320 -0.5136794 b
+## 1 -1.2468690 -0.4506314 a</code></pre>
 <pre class="r"><code># Also can directly sample
 dat[sample(nrow(dat), size = 5), ]</code></pre>
-<pre><code>##             x           y z
-## 5  -0.3881691  0.41921696 e
-## 8  -1.4221560  0.73381924 h
-## 6  -1.4055429 -0.50141674 f
-## 10 -0.7319329 -1.41771715 j
-## 7   1.2524571  0.02574029 g</code></pre>
+<pre><code>##           x          y z
+## 9 1.8832827 -0.4555056 i
+## 2 1.0164320 -0.5136794 b
+## 7 0.3225091  0.3172222 g
+## 8 0.7449245  0.6914605 h
+## 3 1.6118668  1.3498150 c</code></pre>
 <pre class="r"><code>dat[dat$x &gt; 0, ]</code></pre>
-<pre><code>##           x           y z
-## 2 0.5515370 -1.43766331 b
-## 4 1.3922049 -0.80818824 d
-## 7 1.2524571  0.02574029 g
-## 9 0.8815935 -0.41732847 i</code></pre>
+<pre><code>##           x          y z
+## 2 1.0164320 -0.5136794 b
+## 3 1.6118668  1.3498150 c
+## 4 1.9443829  0.7713335 d
+## 7 0.3225091  0.3172222 g
+## 8 0.7449245  0.6914605 h
+## 9 1.8832827 -0.4555056 i</code></pre>
 <pre class="r"><code>dat[dat$z == &quot;a&quot;, ]</code></pre>
-<pre><code>##            x         y z
-## 1 -0.6753829 0.5217765 a</code></pre>
+<pre><code>##           x          y z
+## 1 -1.246869 -0.4506314 a</code></pre>
 <pre class="r"><code># Also can use subset
 subset(dat, x &gt; 0)</code></pre>
-<pre><code>##           x           y z
-## 2 0.5515370 -1.43766331 b
-## 4 1.3922049 -0.80818824 d
-## 7 1.2524571  0.02574029 g
-## 9 0.8815935 -0.41732847 i</code></pre>
+<pre><code>##           x          y z
+## 2 1.0164320 -0.5136794 b
+## 3 1.6118668  1.3498150 c
+## 4 1.9443829  0.7713335 d
+## 7 0.3225091  0.3172222 g
+## 8 0.7449245  0.6914605 h
+## 9 1.8832827 -0.4555056 i</code></pre>
 <pre class="r"><code>subset(dat, z == &quot;a&quot;)</code></pre>
-<pre><code>##            x         y z
-## 1 -0.6753829 0.5217765 a</code></pre>
+<pre><code>##           x          y z
+## 1 -1.246869 -0.4506314 a</code></pre>
 <p>You can edit columns of a data.frame just as you would an individual vector.</p>
 <pre class="r"><code>dat$x_y &lt;- dat$x + dat$y
 head(dat)</code></pre>
-<pre><code>##            x          y z         x_y
-## 1 -0.6753829  0.5217765 a -0.15360640
-## 2  0.5515370 -1.4376633 b -0.88612626
-## 3 -0.3869582  1.6236885 c  1.23673031
-## 4  1.3922049 -0.8081882 d  0.58401670
-## 5 -0.3881691  0.4192170 e  0.03104785
-## 6 -1.4055429 -0.5014167 f -1.90695964</code></pre>
+<pre><code>##            x          y z        x_y
+## 1 -1.2468690 -0.4506314 a -1.6975004
+## 2  1.0164320 -0.5136794 b  0.5027526
+## 3  1.6118668  1.3498150 c  2.9616818
+## 4  1.9443829  0.7713335 d  2.7157164
+## 5 -0.8916156  0.3317443 e -0.5598713
+## 6 -1.0683377  0.3157193 f -0.7526184</code></pre>
 <p>We’ll manipulate data.frames more tomorrow using the <code>tidyverse</code>. Let’s just load it here to use some convenience functions.</p>
 <pre class="r"><code>library(tidyverse)</code></pre>
-<pre><code>## ── Attaching packages ────────────────────────────────────── tidyverse 1.2.1 ──</code></pre>
+<pre><code>## ── Attaching packages ────────</code></pre>
 <pre><code>## ✔ ggplot2 3.0.0     ✔ purrr   0.2.5
 ## ✔ tibble  1.4.2     ✔ dplyr   0.7.6
 ## ✔ tidyr   0.8.1     ✔ stringr 1.3.1
 ## ✔ readr   1.1.1     ✔ forcats 0.3.0</code></pre>
 <pre><code>## Warning: package 'dplyr' was built under R version 3.5.1</code></pre>
-<pre><code>## ── Conflicts ───────────────────────────────────────── tidyverse_conflicts() ──
+<pre><code>## ── Conflicts ─────────────────
 ## ✖ dplyr::filter() masks stats::filter()
 ## ✖ dplyr::lag()    masks stats::lag()</code></pre>
 <pre class="r"><code>glimpse(dat)</code></pre>
 <pre><code>## Observations: 10
 ## Variables: 4
-## $ x   &lt;dbl&gt; -0.6753829, 0.5515370, -0.3869582, 1.3922049, -0.3881691, ...
-## $ y   &lt;dbl&gt; 0.52177654, -1.43766331, 1.62368847, -0.80818824, 0.419216...
+## $ x   &lt;dbl&gt; -1.2468690, 1.0164320, 1.6118668, 1.9443829, -0.8916156, -...
+## $ y   &lt;dbl&gt; -0.4506314, -0.5136794, 1.3498150, 0.7713335, 0.3317443, 0...
 ## $ z   &lt;chr&gt; &quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;, &quot;e&quot;, &quot;f&quot;, &quot;g&quot;, &quot;h&quot;, &quot;i&quot;, &quot;j&quot;
-## $ x_y &lt;dbl&gt; -0.15360640, -0.88612626, 1.23673031, 0.58401670, 0.031047...</code></pre>
+## $ x_y &lt;dbl&gt; -1.6975004, 0.5027526, 2.9616818, 2.7157164, -0.5598713, -...</code></pre>
 <pre class="r"><code># Also a function to make sampling easier
 samp_id &lt;- sample_n(dat, size = 5)
 samp_id</code></pre>
-<pre><code>##            x           y z        x_y
-## 4  1.3922049 -0.80818824 d  0.5840167
-## 7  1.2524571  0.02574029 g  1.2781974
-## 6 -1.4055429 -0.50141674 f -1.9069596
-## 3 -0.3869582  1.62368847 c  1.2367303
-## 1 -0.6753829  0.52177654 a -0.1536064</code></pre>
+<pre><code>##             x          y z        x_y
+## 10 -1.0793659 -2.0237192 j -3.1030851
+## 4   1.9443829  0.7713335 d  2.7157164
+## 9   1.8832827 -0.4555056 i  1.4277771
+## 6  -1.0683377  0.3157193 f -0.7526184
+## 7   0.3225091  0.3172222 g  0.6397313</code></pre>
 </div>
 <div id="files-and-reading-files" class="section level2">
 <h2>files and reading files</h2>
@@ -968,10 +972,10 @@ dat &lt;- read.csv(&quot;data/qog/qog_crossec.csv&quot;)</code></pre>
 <pre><code>## Error in file(file, &quot;rt&quot;): cannot open the connection</code></pre>
 <pre class="r"><code>str(dat) # hmmm</code></pre>
 <pre><code>## 'data.frame':    10 obs. of  4 variables:
-##  $ x  : num  -0.675 0.552 -0.387 1.392 -0.388 ...
-##  $ y  : num  0.522 -1.438 1.624 -0.808 0.419 ...
+##  $ x  : num  -1.247 1.016 1.612 1.944 -0.892 ...
+##  $ y  : num  -0.451 -0.514 1.35 0.771 0.332 ...
 ##  $ z  : chr  &quot;a&quot; &quot;b&quot; &quot;c&quot; &quot;d&quot; ...
-##  $ x_y: num  -0.154 -0.886 1.237 0.584 0.031 ...</code></pre>
+##  $ x_y: num  -1.698 0.503 2.962 2.716 -0.56 ...</code></pre>
 <pre class="r"><code>dat2 &lt;- read.csv(&quot;data/qog/qog_crossec.csv&quot;, sep = &quot;;&quot;, dec = &quot;,&quot;)</code></pre>
 <pre><code>## Warning in file(file, &quot;rt&quot;): cannot open file 'data/qog/qog_crossec.csv':
 ## No such file or directory</code></pre>
@@ -1009,20 +1013,20 @@ dat &lt;- read_csv(&quot;data/qog/qog_crossec.csv&quot;) # same problem</code></
 dat &lt;- read_dta(&quot;data/PSLM 2013-14/PSLM+_Stata+12+format_.dta&quot;)</code></pre>
 <pre><code>## Error: 'data/PSLM 2013-14/PSLM+_Stata+12+format_.dta' does not exist in current working directory ('/Users/luke/Dropbox/teaching/lums_R/classes').</code></pre>
 <pre class="r"><code>head(dat)</code></pre>
-<pre><code>##            x          y z         x_y
-## 1 -0.6753829  0.5217765 a -0.15360640
-## 2  0.5515370 -1.4376633 b -0.88612626
-## 3 -0.3869582  1.6236885 c  1.23673031
-## 4  1.3922049 -0.8081882 d  0.58401670
-## 5 -0.3881691  0.4192170 e  0.03104785
-## 6 -1.4055429 -0.5014167 f -1.90695964</code></pre>
+<pre><code>##            x          y z        x_y
+## 1 -1.2468690 -0.4506314 a -1.6975004
+## 2  1.0164320 -0.5136794 b  0.5027526
+## 3  1.6118668  1.3498150 c  2.9616818
+## 4  1.9443829  0.7713335 d  2.7157164
+## 5 -0.8916156  0.3317443 e -0.5598713
+## 6 -1.0683377  0.3157193 f -0.7526184</code></pre>
 <pre class="r"><code>glimpse(dat)</code></pre>
 <pre><code>## Observations: 10
 ## Variables: 4
-## $ x   &lt;dbl&gt; -0.6753829, 0.5515370, -0.3869582, 1.3922049, -0.3881691, ...
-## $ y   &lt;dbl&gt; 0.52177654, -1.43766331, 1.62368847, -0.80818824, 0.419216...
+## $ x   &lt;dbl&gt; -1.2468690, 1.0164320, 1.6118668, 1.9443829, -0.8916156, -...
+## $ y   &lt;dbl&gt; -0.4506314, -0.5136794, 1.3498150, 0.7713335, 0.3317443, 0...
 ## $ z   &lt;chr&gt; &quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;, &quot;e&quot;, &quot;f&quot;, &quot;g&quot;, &quot;h&quot;, &quot;i&quot;, &quot;j&quot;
-## $ x_y &lt;dbl&gt; -0.15360640, -0.88612626, 1.23673031, 0.58401670, 0.031047...</code></pre>
+## $ x_y &lt;dbl&gt; -1.6975004, 0.5027526, 2.9616818, 2.7157164, -0.5598713, -...</code></pre>
 <pre class="r"><code># check labels
 attributes(dat$s2aq01)$label</code></pre>
 <pre><code>## NULL</code></pre>

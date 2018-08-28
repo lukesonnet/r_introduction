@@ -44,7 +44,7 @@ For each major version of R (3.4, 3.5, etc.) you need to install a series of pac
 search()
 
 # how do you install new packages?
-install.packages('lubridate')
+install.packages('lubridate') 
 
 # what is downloaded and available to be used?
 library(lubridate)
@@ -97,6 +97,7 @@ x
 **Exercise:** Create a variable called `y` and store in it the square root of 4.
 
 ```{r}
+y <- sqrt(4)
 ```
 
 Let's create a simple vector!
@@ -128,6 +129,8 @@ Let's show an example of when you might need to debug a problem when creating a 
 ```{r}
 z <- c('1', '2', '3')
 z
+str(z)
+sum(x)
 sum(z)
 ```
 
@@ -143,6 +146,8 @@ str(z)
 **Exercise**: Use the `as.numeric()` function to change the `z` object to a numeric vector and then save the sum as `z_num`. Look at the `?as.numeric` help if you aren't sure how to use it!
 
 ```{r}
+z_num <- as.numeric(z)
+z_num
 ```
 
 ## Different kinds of vectors
@@ -158,7 +163,9 @@ x/3
 
 # integer
 x <- c(1L, 2L, 3L)
+xnum <- c(1, 2, 3)
 class(x)
+class(xnum)
 x <- 1:3
 class(x)
 str(x)
@@ -166,16 +173,20 @@ x/3
 str(x/3)
 
 # character
-x <- c("a", "b", "87")
+x <- c("1", "a", "87", "a")
+x
+unique(x)
 class(x)
 str(x)
 x/3
+as.numeric(x)/3
 
 # logical
 x <- c(TRUE, FALSE, TRUE)
 class(x)
 str(x)
 x/3 # huh?
+sum(x)
 
 # the fact that R will often treat FALSE as 0 and TRUE as 1
 # when needed is very handy in _many_ instances
@@ -185,8 +196,11 @@ x
 # we can use table
 table(x)
 # or we can sum the number of times there is an "a"
-x == "a"
+testvec <- x == 'a'
+testvec
+sum(testvec)
 sum(x == "a")
+mean(x == "a")
 
 # factor
 x <- factor(c("a", "b", "a"))
@@ -215,7 +229,8 @@ There a couple of different ways we can create numeric vectors, especially when 
 ```{r}
 x <- c(1, 2, 3)
 y <- 1:3
-z <- seq(1, 3, by = 1)
+z <- seq(from = 1, to = 3, by = 1)
+# z <- seq(from = 1, to = 3, length = 100)
 x
 y
 z
@@ -261,10 +276,13 @@ What if you have two vectors of different lengths?
 a_short_vector <- c(-1, 1)
 length(a_short_vector)
 
+a_short_vector
 a_vector
 a_short_vector + a_vector # recycling with warning
 
 a_long_vector <- 1:4
+a_short_vector
+a_long_vector
 a_long_vector + a_short_vector # recycling without warning
 ```
 
@@ -277,7 +295,6 @@ There are also a bunch of functions we can apply to a vector besides `length`.
 length(a_vector)
 str(a_vector)
 class(a_vector)
-summarize(a_vector)
 
 # functions that summarize your object in one number
 sum(a_vector)
@@ -309,6 +326,9 @@ names(a_vector)
 **Exercise:** Create a vector of four numbers using the `c()` and store it in a variable. Create a second vector of four numbers and store it in a variable. Add the two vectors together and take the `sum()` of the added vector.
 
 ```{r}
+x <- c(1.7, 3.3, -1, 0)
+y <- 5:8
+sum(x + y)
 ```
 
 ## Special values
@@ -320,13 +340,18 @@ The `NA` value is similar to `.` in Stata; it represents missing data. It isn't 
 ```{r}
 na_vector <- c(1.3, NA, -0.4)
 na_vector
+str(na_vector)
 is.na(na_vector)
+mean(x)
 mean(na_vector)
+sum(na_vector)
 ```
 
-**Exercise**: Use the above `na_vector` vector and use the `mean()` functino to get the mean of `na_vector`, ignoring the missing value. Use the `?mean` help.
+**Exercise**: Use the above `na_vector` vector and use the `mean()` function to get the mean of `na_vector`, ignoring the missing value. Use the `?mean` help.
 
 ```{r}
+na_vector
+mean(na_vector, na.rm = TRUE)
 ```
 
 There are several other special values you may see:
@@ -362,6 +387,7 @@ log(-1)
 sqrt(-1)
 ?is.nan
 ?is.infinite
+is.finite(c(1/0, 3, Inf))
 ```
 
 ## Subsetting and indexing
@@ -394,6 +420,7 @@ l_vec <- c(FALSE, TRUE, TRUE)
 na_vector
 na_vector[l_vec]
 
+na_vector
 na_vector > 0
 na_vector[na_vector > 0]
 
@@ -526,7 +553,7 @@ rbeta(n = 4, shape1 = 1, shape2 = 3.4)
 **Exercise:** Use `runif` to draw 10 numbers from a continuous uniform distribution ranging from 3 to 4.
 
 ```{r}
-?runif
+runif(n = 10, min = 3, max = 4)
 ```
 
 Another useful function is `sample`. It can be used many ways. Let's explore some of them.
@@ -534,6 +561,9 @@ Another useful function is `sample`. It can be used many ways. Let's explore som
 ```{r}
 sample(3) # if given an integer, just randomly orders a sequence starting at 1
 sample(c(1.0, -3.2, 4.1)) # if given a vector, it randomly orders it
+
+
+
 sample(1:10, replace = TRUE) # can sample with replacement, defaults to same size vector
 sample(c(TRUE, FALSE), size = 10, replace = TRUE) # can sample with replacement, different size vector
 sample(1:3, size = 10, replace = FALSE) # What does this error mean?
