@@ -7,7 +7,6 @@ iso3n,continent
 20,Europe
 24,Africa
 660,Americas
-10,NA
 28,Americas
 32,Americas
 51,Asia
@@ -29,9 +28,7 @@ iso3n,continent
 535,Americas
 70,Europe
 72,Africa
-74,NA
 76,Americas
-86,NA
 96,Asia
 100,Europe
 854,Africa
@@ -46,7 +43,6 @@ iso3n,continent
 152,Americas
 156,Asia
 162,Oceania
-166,NA
 170,Americas
 174,Africa
 178,Africa
@@ -77,7 +73,6 @@ iso3n,continent
 250,Europe
 254,Americas
 258,Oceania
-260,NA
 266,Africa
 270,Africa
 268,Asia
@@ -95,7 +90,6 @@ iso3n,continent
 624,Africa
 328,Americas
 332,Americas
-334,NA
 336,Europe
 340,Americas
 344,Asia
@@ -204,7 +198,6 @@ iso3n,continent
 90,Oceania
 706,Africa
 710,Africa
-239,NA
 728,Africa
 724,Europe
 144,Asia
@@ -235,7 +228,6 @@ iso3n,continent
 826,Europe
 834,Africa
 840,Americas
-581,NA
 858,Americas
 860,Asia
 548,Oceania
