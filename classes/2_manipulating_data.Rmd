@@ -11,6 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 Base R cheatsheet: https://www.rstudio.com/wp-content/uploads/2016/05/base-r.pdf
+
 tidyverse cheatsheet: https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf
 
 ## Basic data manipulation
