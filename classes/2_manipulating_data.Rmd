@@ -1,0 +1,387 @@
+---
+title: 'Class 2: Manipulating Data'
+author: "Luke Sonnet"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Base R cheatsheet: https://www.rstudio.com/wp-content/uploads/2016/05/base-r.pdf
+tidyverse cheatsheet: https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf
+
+## Basic data manipulation
+
+Most of the work you do in R actually has to do with tweaking, summarizing, modifying, and otherwise manipulating data. Let's go ahead and use a simplified panel of country level data over time and work from there.
+
+```{r}
+library(tidyverse)
+qog <- read_csv("https://raw.githubusercontent.com/lukesonnet/r_introduction/master/data/qog/qog_ts.csv")
+glimpse(qog)
+table(qog$cname)
+table(qog$year)
+table(qog$cname, qog$year)
+```
+
+First let's figure out how to create new variables. As we discussed yesterday, it can be as simple as just storing a vector in a data.frame.
+
+```{r}
+qog$test <- 1
+glimpse(qog)
+table(qog$test)
+```
+
+What happens when we just pass a number instead of a vector? Remember, what is recycling?
+
+```{r}
+qog$test2 <- 1:7
+```
+
+```{r}
+qog$copy_code <- qog$ccode
+table(qog$copy_code, qog$ccode)
+table(qog$copy_code, qog$ccode)[1:5, 1:5]
+with(qog, table(copy_code, ccode))
+with(qog, table(copy_code, ccode))[1:5, 1:5]
+```
+
+We can also use the `ifelse()` function which is really useful.
+
+```{r}
+# basic usage
+x <- c(-1, -0.5, 1)
+x < 0
+ifelse(x < 0, "negative", "positive")
+
+# example data usage
+qog$pakistan <- ifelse(qog$cname == "Pakistan", 1, 0)
+table(qog$pakistan)
+
+qog$pakistan <- qog$cname == "Pakistan"
+table(qog$pakistan)
+
+qog$pakistan <- as.numeric(qog$cname == "Pakistan")
+table(qog$pakistan)
+
+qog$is_this_pakistan <- ifelse(qog$cname == "Pakistan", "yes", "no")
+table(qog$pakistan, qog$is_this_pakistan)
+```
+
+We can see the population in `gle_pop`. What scale is it on? We can use a histogram to help us out here. Use the `hist()` function.
+```{r}
+hist(qog$gle_pop)
+```
+
+Look's like it's probably in thousands. Lets change it to raw numbers.
+
+```{r}
+qog$gle_pop_raw <- qog$gle_pop * 1000
+```
+
+We can use `plot()` to do a simple scatter plot and see what happened.
+
+```{r}
+plot(qog$gle_pop, qog$gle_pop_raw)
+```
+
+Let's make another histogram of life expectancy.
+```{r}
+hist(qog$wdi_lifexp)
+max(qog$wdi_lifexp)
+max(qog$wdi_lifexp, na.rm = TRUE)
+```
+
+What years are we missing data for life expectancy? There are some packages for this, but we can also do it manually.
+
+```{r}
+table(qog$year, is.na(qog$wdi_lifexp))
+```
+
+**Exercise:** Using the filtering commands we used yesterday, pick out all of the rows that correspond to year 2011. Save this as a new dataset called `qog_2011`. Hint: you'll need to use the `[]` braces and you'll need to use a logical statement to select rows, while keeping all of the columns. 
+
+```{r}
+```
+
+Then pass the `wdi_lifexp` column the `hist()` function to get a histogram of the life expectancy in 2011. Then look at a scatter plot comparing `wdi_lifexp` and `wdi_gdpcappppcon2011`, the GDP per capita. Use the `plot()` function. If you're done and have time, check the other commands in the `?plot` function. See if you can change the axis labels.
+
+```{r}
+```
+
+**Exercise:** Using the `qog_2011` data, create a new variable where you get the `log()` of the population and make a scatter plot comparing the regular and logged version of the population!
+
+```{r}
+```
+
+## Tidyverse
+
+What is the tidyverse?
+
+https://www.tidyverse.org/
+
+### Subsetting
+
+In general let's stick with the `tidyverse` way of manipulating data to do all of the above. The `tidyverse` has a bunch of functions to help you work with data. Let's start with two fundamental ones to help you select certain columns or certain rows--`select()` and `filter()`.
+
+`select()` gets columns, and can be used to order columns
+
+```{r}
+library(tidyverse) # make sure this is loaded
+select(qog, cname, year, gle_pop)
+select(qog, starts_with("c"))
+select(qog, starts_with("c"), contains("gdp"))
+select(qog, starts_with("c"), contains("gdp"), gle_pop)
+select(qog, gle_pop, starts_with("c"), contains("gdp"))
+
+?select_helpers
+```
+
+`filter()` is used to select rows.
+
+```{r}
+filter(qog, cname == "Pakistan")
+filter(qog, cname == "Pakistan", year > 2010)
+filter(qog, cname == "Pakistan" & year > 2010)
+filter(qog, cname == "Pakistan" | year > 2010)
+
+qog_pakistan <- filter(qog, cname == "Pakistan")
+```
+
+**Exercise:** Use the filter method to select only rows that are later than year 2010 OR are earlier than 1990.
+
+```{r}
+```
+
+**Exercise:** Use the filter method to select only rows where the variable `wdi_expmil` is not missing. Table the years in the resulting data.frame.
+
+```{r}
+```
+
+### Editing
+
+There are two main functions we care about for editing, `mutate()` and `summarize()`.
+
+`mutate()` just creates new variables, and expects/requires them to be the same length as the original data.
+
+```{r}
+mutate(qog, gle_pop_raw = gle_pop * 1000)
+mutate(qog, gle_pop_raw = gle_pop * 1000, gle_pop_log = log(gle_pop_raw))
+qog_bigger <- mutate(qog, gle_pop_raw = gle_pop * 1000, gle_pop_log = log(gle_pop_raw))
+select(qog_bigger, starts_with("gle_pop"))
+```
+
+`summarize()` creates new variables, but only as summaries as old variables. This means it summarizes the entire data set and expects things to return a single value!
+
+```{r}
+summarize(qog, avg_pop = mean(gle_pop_raw))
+summarize(qog, avg_pop = mean(gle_pop_raw, na.rm = TRUE))
+summarize(qog, avg_pop = mean(gle_pop_raw, na.rm = TRUE), avg_lifexp = mean(wdi_lifexp, na.rm = TRUE))
+```
+
+`summarize_at()` is a very useful function as well. It allows you to apply the same function for a variety of variables.
+
+```{r}
+?summarize_at
+summarize_at(qog, vars(contains("pop")), mean)
+summarize_at(qog, vars(contains("pop")), mean, na.rm = TRUE)
+summarize_at(qog, vars(contains("pop")), mean)
+summarize_at(qog, vars(gle_pop_raw, wdi_lifexp), mean, na.rm = TRUE)
+summarize_at(qog, vars(gle_pop_raw, wdi_lifexp), funs(mean(., na.rm = TRUE)))
+summarize_at(qog, vars(gle_pop_raw, wdi_lifexp), funs(avg = mean(., na.rm = TRUE)))
+summarize_at(qog, 
+             vars(gle_pop_raw, wdi_lifexp), 
+             funs(avg = mean(., na.rm = TRUE),
+                  med = median(., na.rm = TRUE)))
+```
+
+We can also use this to conveniently check where all the missing values are!
+
+```{r}
+summarize_at(qog,
+             vars(everything()), 
+             funs(sum(is.na(.))))
+```
+
+**Exercise:** Use the mutate function to add together `wdi_exphpu` and `wdi_expedu` and create a new variable that is total public education and public health expenditure as a percent of GDP. Then use `plot()` to create a scatter plot comparing this new variable with `wdi_expmil`, which is military expenditure as a percent of GDP.
+
+```{r}
+```
+
+**Exercise:** Use the mutate function to add together `wdi_exphpu` and `wdi_expedu` and create a new variable that is total public education and public health expenditure as a percent of GDP. Then use `plot()` to create a scatter plot comparing this new variable with `wdi_expmil`, which is military expenditure as a percent of GDP.
+
+```{r}
+```
+
+
+### Piping
+
+Now, we're gonna do something pretty wild. We're going to learn about pipes--`%>%`. All pipes do is take something and move it forward to the first argument of the next function. They come from the `magrittr` package, which is loaded by the `tidyverse`.
+
+```{r}
+str(qog$year)
+mean(qog$year)
+?mean
+
+
+qog$year %>% mean()
+qog$year %>% median()
+qog$year %>% median
+qog$year %>% median
+
+# easy to confuse data name with the variable names
+select(qog, cname, year, wdi_expedu)
+# pipes make it clearer
+qog %>% select(cname, year, wdi_expedu)
+```
+
+Looks a little better! But now let's see what the real power of the pipes are--chaining together commands.
+
+Let's get only expenditure variables, the country name, and the year for Pakistan. We could use traditional subsetting:
+
+```{r}
+qog[qog$cname == "Pakistan", c("cname", "year", "wdi_exphpu", "wdi_expedu", "wdi_expmil")] # looks fine
+```
+
+We can also use the tidyverse without piping one of two ways. First:
+
+```{r}
+qog_pk <- filter(qog, cname == "Pakistan")
+select(qog_pk, cname, year, contains("wdi_exp"))
+```
+
+Second, all at once, with "nested" functions:
+
+```{r}
+select(filter(qog, cname == "Pakistan"), cname, year, contains("wdi_exp"))
+```
+
+Or using pipes:
+
+```{r}
+qog %>%
+  filter(cname == "Pakistan") %>%
+  select(cname, year, contains("wdi_exp"))
+```
+
+Then, if we want, we can also do some mutating or summarizing! Let's get the average life expectancy in Pakistan over the whole time period.
+
+```{r}
+qog %>%
+  filter(cname == "Pakistan") %>%
+  summarize(avg_lifexp = mean(wdi_lifexp, na.rm = TRUE),
+            med_lifexp = median(wdi_lifexp, na.rm = TRUE))
+```
+
+**Exercise:** Using pipes, take the data, filter it to the year 2010, and then use summarize_at to get the mean and the median of life expectancy in the world in 2010.
+
+```{r}
+```
+
+### Merging
+
+In the tidyverse, we use a series of `join` commands to merge together datasets. The most common one that I use is the `left_join()` command.
+
+This data doesn't have any data on continents. Let's say we wanted to merge that on from another source.
+
+```{r}
+cont <- read_csv("https://raw.githubusercontent.com/lukesonnet/r_introduction/master/data/qog/continents.csv")
+glimpse(cont)
+cont %>% summarize_at(vars(everything()), funs(sum(is.na(.))))
+```
+
+Turns out, that `iso3n` column is the ISO-3166-1 standard country code, which is same as the `qog$ccode` variable. We can use this variable to join together the datasets. Left joins will preserve _all_ of the variables from the first dataset, and only merge on to it variables from the second dataset where it finds a match. If there are duplicates in the right dataset, it will duplicate the rows on the left dataset and merge them in.
+
+```{r, error = TRUE}
+qog_left <- left_join(qog, cont)
+qog_left <- left_join(qog, cont, by = c("iso3n", "ccode"))
+qog_left <- left_join(qog, cont, by = c("ccode" = "iso3n"))
+nrow(qog)
+nrow(qog_left)
+table(is.na(qog_left$continent))
+
+setdiff(qog$ccode, cont$iso3n)
+```
+
+A right join does the opposite. It preserves all of the data in the second dataset, merging on to it the first dataset. Note that in this merge, because we have many years for each country code, we end up with more rows than were in the `cont` dataset.
+
+```{r}
+qog_right <- right_join(qog, cont, by = c("ccode" = "iso3n"))
+# note that this is equivalent to left_join with the datasets in reverse order
+nrow(qog)
+nrow(qog_right)
+table(is.na(qog_right$continent))
+```
+
+We can also do an inner_join or a full_join. Inner join only keeps rows from both datasets that are matches, and full_join keeps all rows from both datasets.
+
+**Exercise:** Do an inner join of these two datasets. How many NAs in the `continent` variable should there be?
+
+### Grouping
+
+The last topic to cover here is grouping. Grouping is really useful because it allows you to apply functions, create mutations, or summarize data for different subcategories of your data. I use grouping _all_ the time.
+
+```{r}
+qog_m <- left_join(qog, cont, by = c("ccode" = "iso3n"))
+qog_m %>%
+  group_by(continent)
+
+qog_m %>%
+  group_by(continent) %>%
+  ungroup()
+```
+
+Now let's get the average life expectancy by continent in 2011.
+
+```{r}
+qog_m %>%
+  filter(year == 2011) %>%
+  summarize(avg_lifexp = mean(wdi_lifexp, na.rm = TRUE))
+
+qog_m %>%
+  filter(year == 2011) %>%
+  group_by(continent) %>%
+  summarize(avg_lifexp = mean(wdi_lifexp, na.rm = TRUE))
+
+qog_m %>%
+  filter(year == 2011) %>%
+  group_by(continent) %>%
+  summarize(avg_lifexp = mean(wdi_lifexp, na.rm = TRUE),
+            min_lifexp = min(wdi_lifexp, na.rm = TRUE))
+```
+
+We an also easily group by ad-hoc variables that are created right in the `group_by` function:
+
+```{r}
+qog_m %>%
+  filter(year == 2011) %>%
+  group_by(wdi_lifexp < mean(wdi_lifexp, na.rm = TRUE)) %>%
+  summarize(mean(wdi_exphpu, na.rm = TRUE))
+```
+
+Probably a lot better if we can use a new variable and names to clean everything up. Let's first create our grouping variable using a `mutate()` call.
+
+```{r}
+qog_m %>%
+  filter(year == 2011) %>%
+  mutate(lifexp_group = ifelse(wdi_lifexp < mean(wdi_lifexp, na.rm = TRUE),
+                               "below avg",
+                               "above avg")) %>%
+  group_by(lifexp_group) %>%
+  summarize(avg_exphpu = mean(wdi_exphpu, na.rm = TRUE))
+```
+
+We can also use multiple variables when grouping!
+
+```{r}
+qog_m %>%
+  filter(year == 2011) %>%
+  mutate(lifexp_group = ifelse(wdi_lifexp < mean(wdi_lifexp, na.rm = TRUE),
+                               "below avg",
+                               "above avg")) %>%
+  group_by(continent, lifexp_group) %>%
+  summarize(avg_exphpu = mean(wdi_exphpu, na.rm = TRUE))
+```
+
+**Exercise:** Filtering to the year 2013, group by continent and above average and below average GDP per capita. In each of those groups, compute the average military expenditure as a share of GDP, as well as the average `fh_feb` score, which is the score of how much freedom of expression and belief (both media and religious freedom) a country has.
